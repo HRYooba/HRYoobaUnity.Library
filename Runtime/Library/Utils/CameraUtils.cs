@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HRYooba.Library
 {
-    public static class CameraUtility
+    public static class CameraUtils
     {
         public static float HorizontalToVerticalFOV(float horizontalFOV, float aspect)
         {

@@ -5,7 +5,7 @@ using System.IO;
 
 namespace HRYooba.Library
 {
-    public static class DataUtility
+    public static class DataUtils
     {
         public static void SaveDataToJson<T>(T obj, string savePath)
         {

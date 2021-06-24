@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HRYooba.Library
 {
-    public static class CoroutineUtility
+    public static class CoroutineUtils
     {
         // 遅延実行
         public static IEnumerator DelayExecuteCoroutine(System.Action callback, float delaySeconds)
