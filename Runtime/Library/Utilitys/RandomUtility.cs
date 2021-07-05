@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HRYooba.Library
 {
-    public static class RandomUtils
+    public static class RandomUtility
     {
         public static Vector2 Vector2Range(Vector2 min, Vector2 max)
         {
