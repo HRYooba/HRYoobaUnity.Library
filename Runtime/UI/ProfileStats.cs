@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace HRYooba.UI
 {
-    [ExecuteInEditMode]
     public class ProfileStats : MonoBehaviour
     {
         private const uint SizeMB = 1024 * 1024;
