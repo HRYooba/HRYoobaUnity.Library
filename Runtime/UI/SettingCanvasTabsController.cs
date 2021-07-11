@@ -17,6 +17,10 @@ namespace HRYooba.UI
                 int tabNum = i;
                 _tabs[tabNum].onClick.AddListener(() => { SetActiveWindow(tabNum); });
             }
+        }
+
+        private void Start()
+        {
             SetActiveWindow(0);
         }
 
