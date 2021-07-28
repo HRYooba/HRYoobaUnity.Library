@@ -36,6 +36,12 @@ namespace HRYooba.Editor
             InstantiateGameObject(menuCommand, "FloatController");
         }
 
+        [MenuItem("GameObject/HRYoobaUI/Vector2Controller", false, 21)]
+        private static void CreateVector2Controller(MenuCommand menuCommand)
+        {
+            InstantiateGameObject(menuCommand, "Vector2Controller");
+        }
+
         [MenuItem("GameObject/HRYoobaUI/Vector3Controller", false, 21)]
         private static void CreateVector3Controller(MenuCommand menuCommand)
         {
