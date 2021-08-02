@@ -17,7 +17,7 @@ namespace HRYooba.Library
                 if (track.GetType() == typeof(ActivationTrack))
                 {
                     var activationObject = playableDirector.GetGenericBinding(track) as GameObject;
-                    playableDirector.gameObject.ObserveEveryValueChanged(_ => _.activeSelf).Where(_ => !_.activeSelf).Subscribe(activationObject.SetActive).AddTo(playableDirector);
+                    playableDirector.gameObject.ObserveEveryValueChanged(_ => _.activeSelf).Where(activeSelf => !activeSelf).Subscribe(activationObject.SetActive).AddTo(playableDirector);
                 }
             }
         }
