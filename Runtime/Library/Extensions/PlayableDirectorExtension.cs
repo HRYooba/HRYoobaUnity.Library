@@ -9,7 +9,7 @@ namespace HRYooba.Library
 {
     public static class PlayableDirectorExtension
     {
-        public static void BindAllActivationTrackToThisActivation(this PlayableDirector playableDirector)
+        public static void BindAllActivationTrackToThisInactivation(this PlayableDirector playableDirector)
         {
             var tracks = (playableDirector.playableAsset as TimelineAsset).GetOutputTracks();
             foreach (var track in tracks)
@@ -17,7 +17,7 @@ namespace HRYooba.Library
                 if (track.GetType() == typeof(ActivationTrack))
                 {
                     var activationObject = playableDirector.GetGenericBinding(track) as GameObject;
-                    playableDirector.gameObject.ObserveEveryValueChanged(_ => _.activeSelf).Subscribe(activationObject.SetActive).AddTo(playableDirector);
+                    playableDirector.gameObject.ObserveEveryValueChanged(_ => _.activeSelf).Where(_ => !_.activeSelf).Subscribe(activationObject.SetActive).AddTo(playableDirector);
                 }
             }
         }
