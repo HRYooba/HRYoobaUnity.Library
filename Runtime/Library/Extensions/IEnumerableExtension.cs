@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 
 public static class IEnumerableExtension
 {
@@ -15,5 +15,21 @@ public static class IEnumerableExtension
         {
             action(item);
         }
+    }
+
+    public class IndexedItem<T>
+    {
+        public T Element { get; private set; }
+        public int Index { get; private set; }
+        public IndexedItem(T element, int index)
+        {
+            Element = element;
+            Index = index;
+        }
+    }
+
+    public static IEnumerable<IndexedItem<T>> Indexed<T>(this IEnumerable<T> source)
+    {
+        return source.Select((x, i) => new IndexedItem<T>(x, i));
     }
 }
