@@ -6,4 +6,4 @@ HRYoobaUnityLibrary
 - DOTween
 
 ## 2.設定
-- Demigiant/DOTweenにCreate Assembly DefinitionをDG.Tweeingで作成
+- Tool/Demigiant/DOTween Utility PanelからAssembly Definitionを作成
