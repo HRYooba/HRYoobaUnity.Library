@@ -6,4 +6,5 @@ HRYoobaUnityLibrary
 - DOTween
 
 ## 2.設定
-- Tool/Demigiant/DOTween Utility PanelからAssembly Definitionを作成
+- OpenUPMからDOTweenを入れる
+
