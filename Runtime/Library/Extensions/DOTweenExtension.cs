@@ -34,7 +34,7 @@ namespace HRYooba.Library
         [SerializeField]
         private float _value;
 
-        public FloatTweenProperty(float value)
+        public FloatTweenProperty(float value = default)
         {
             Value = _value;
         }
@@ -51,7 +51,7 @@ namespace HRYooba.Library
         [SerializeField]
         private Vector2 _value;
 
-        public Vector2TweenProperty(Vector2 value)
+        public Vector2TweenProperty(Vector2 value = default)
         {
             Value = _value;
         }
@@ -68,7 +68,7 @@ namespace HRYooba.Library
         [SerializeField]
         private Vector3 _value;
 
-        public Vector3TweenProperty(Vector3 value)
+        public Vector3TweenProperty(Vector3 value = default)
         {
             Value = _value;
         }
@@ -85,7 +85,7 @@ namespace HRYooba.Library
         [SerializeField]
         private Color _value;
 
-        public ColorTweenProperty(Color value)
+        public ColorTweenProperty(Color value = default)
         {
             Value = _value;
         }
