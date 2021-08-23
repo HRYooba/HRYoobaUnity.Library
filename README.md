@@ -6,5 +6,17 @@ HRYoobaUnityLibrary
 - DOTween
 
 ## 2.設定
-- OpenUPMからDOTweenを入れる
+```json
+"scopedRegistries": [
+    {
+        "name": "package.openupm.com",
+        "url": "https://package.openupm.com",
+        "scopes": [
+        "com.demigiant.dotween",
+        "com.neuecc.unirx",
+        "com.openupm"
+        ]
+    }
+]
+```
 
