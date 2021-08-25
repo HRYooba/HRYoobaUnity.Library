@@ -36,7 +36,7 @@ namespace HRYooba.Library
 
         public FloatTweenProperty(float value = default)
         {
-            Value = _value;
+            _value = value;
         }
 
         public float Value
@@ -53,7 +53,7 @@ namespace HRYooba.Library
 
         public Vector2TweenProperty(Vector2 value = default)
         {
-            Value = _value;
+            _value = value;
         }
 
         public Vector2 Value
@@ -70,7 +70,7 @@ namespace HRYooba.Library
 
         public Vector3TweenProperty(Vector3 value = default)
         {
-            Value = _value;
+            _value = value;
         }
 
         public Vector3 Value
@@ -87,7 +87,7 @@ namespace HRYooba.Library
 
         public ColorTweenProperty(Color value = default)
         {
-            Value = _value;
+            _value = value;
         }
 
         public Color Value
