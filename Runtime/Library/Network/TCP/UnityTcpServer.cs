@@ -18,7 +18,7 @@ namespace HRYooba.Library.Network
         private TcpListener _listener;
         private List<UnityTcpSession> _sessions = new List<UnityTcpSession>();
         private CancellationTokenSource _cancellation;
-        
+
         private Subject<UnityTcpSession> _onSessionConnected = new Subject<UnityTcpSession>();
         private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
         private Subject<string> _onMessageReceived = new Subject<string>();
@@ -32,18 +32,12 @@ namespace HRYooba.Library.Network
 
         public IObservable<UnityTcpSession> OnSessionConnected
         {
-            get
-            {
-                return _onSessionConnected.ObserveOnMainThread();
-            }
+            get { return _onSessionConnected.ObserveOnMainThread(); }
         }
 
         public IObservable<UnityTcpSession> OnSessionDisconnected
         {
-            get
-            {
-                return _onSessionDisconnected.ObserveOnMainThread();
-            }
+            get { return _onSessionDisconnected.ObserveOnMainThread(); }
         }
 
         public IObservable<string> OnMessageReceived
