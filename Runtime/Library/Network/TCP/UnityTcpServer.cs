@@ -18,6 +18,7 @@ namespace HRYooba.Library.Network
         private TcpListener _listener;
         private List<UnityTcpSession> _sessions = new List<UnityTcpSession>();
         private CancellationTokenSource _cancellation;
+        
         private Subject<UnityTcpSession> _onSessionConnected = new Subject<UnityTcpSession>();
         private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
         private Subject<string> _onMessageReceived = new Subject<string>();
