@@ -17,8 +17,17 @@ namespace HRYooba.Library.Network
         private CancellationTokenSource _cancellation;
 
         private Subject<string> _onMessageReceived = new Subject<string>();
+        private Subject<IPEndPoint> _onServerClosed = new Subject<IPEndPoint>();
 
-        public UnityTcpClient() { }
+        public UnityTcpClient()
+        {
+            OnServerClosed.Subscribe(endPoint =>
+            {
+                var ipAddress = ((IPEndPoint)_client.Client.RemoteEndPoint).Address;
+                var port = ((IPEndPoint)_client.Client.RemoteEndPoint).Port;
+                Debug.Log($"Server({ipAddress}:{port}) closed.");
+            });
+        }
 
         ~UnityTcpClient()
         {
@@ -27,7 +36,12 @@ namespace HRYooba.Library.Network
 
         public IObservable<string> OnMessageReceived
         {
-            get { return _onMessageReceived; }
+            get { return _onMessageReceived.ObserveOnMainThread(); }
+        }
+
+        public IObservable<IPEndPoint> OnServerClosed
+        {
+            get { return _onServerClosed.ObserveOnMainThread(); }
         }
 
         public void Connect(string ipAddress, int port)
@@ -77,6 +91,9 @@ namespace HRYooba.Library.Network
 
             _onMessageReceived.Dispose();
             _onMessageReceived = null;
+
+            _onServerClosed.Dispose();
+            _onServerClosed = null;
         }
 
         private async Task Receive(CancellationToken cancellationToken)
@@ -101,9 +118,7 @@ namespace HRYooba.Library.Network
                     else
                     {
                         // サーバークローズ
-                        var ipAddress = ((IPEndPoint)_client.Client.RemoteEndPoint).Address;
-                        var port = ((IPEndPoint)_client.Client.RemoteEndPoint).Port;
-                        Debug.Log($"Server({ipAddress}:{port}) closed.");
+                        _onServerClosed.OnNext((IPEndPoint)_client.Client.RemoteEndPoint);
 
                         Disconnect();
                         break;
