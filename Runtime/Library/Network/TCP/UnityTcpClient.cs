@@ -21,12 +21,7 @@ namespace HRYooba.Library.Network
 
         public UnityTcpClient()
         {
-            OnServerClosed.Subscribe(endPoint =>
-            {
-                var ipAddress = ((IPEndPoint)_client.Client.RemoteEndPoint).Address;
-                var port = ((IPEndPoint)_client.Client.RemoteEndPoint).Port;
-                Debug.Log($"Server({ipAddress}:{port}) closed.");
-            });
+            OnServerClosed.Subscribe(endPoint => Debug.Log($"Server({endPoint.Address}:{endPoint.Port}) closed."));
         }
 
         ~UnityTcpClient()
