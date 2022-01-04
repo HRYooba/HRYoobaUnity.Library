@@ -1,24 +1,39 @@
 using System;
 using System.Net.Sockets;
 
-public class UnityTcpSession : IDisposable
+namespace HRYooba.Library.Network
 {
-    public UnityTcpSession(TcpClient client)
+    public class UnityTcpSession : IDisposable
     {
-        Id = Guid.NewGuid();
-        Client = client;
+        public UnityTcpSession(TcpClient client)
+        {
+            Id = Guid.NewGuid();
+            Client = client;
+        }
+
+        ~UnityTcpSession()
+        {
+            Dispose();
+        }
+
+        public Guid Id { get; }
+        internal TcpClient Client { get; }
+
+        public void Dispose()
+        {
+            Client.Dispose();
+        }
     }
 
-    ~UnityTcpSession()
+    public struct UnityTcpSessionMessage
     {
-        Dispose();
-    }
+        public UnityTcpSessionMessage(Guid id, string message)
+        {
+            Id = id;
+            Message = message;
+        }
 
-    public Guid Id { get; }
-    internal TcpClient Client { get; }
-
-    public void Dispose()
-    {
-        Client.Dispose();
+        public Guid Id { get; }
+        public string Message { get; }
     }
 }

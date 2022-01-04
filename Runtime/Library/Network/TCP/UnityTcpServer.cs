@@ -21,7 +21,7 @@ namespace HRYooba.Library.Network
 
         private Subject<UnityTcpSession> _onSessionConnected = new Subject<UnityTcpSession>();
         private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
-        private Subject<string> _onMessageReceived = new Subject<string>();
+        private Subject<UnityTcpSessionMessage> _onMessageReceived = new Subject<UnityTcpSessionMessage>();
 
         public UnityTcpServer() { }
 
@@ -40,7 +40,7 @@ namespace HRYooba.Library.Network
             get { return _onSessionDisconnected.ObserveOnMainThread(); }
         }
 
-        public IObservable<string> OnMessageReceived
+        public IObservable<UnityTcpSessionMessage> OnMessageReceived
         {
             get { return _onMessageReceived.ObserveOnMainThread(); }
         }
@@ -179,7 +179,8 @@ namespace HRYooba.Library.Network
                     // データ終了文字があれば読み取り完了
                     if (message.ToString().Contains("\n"))
                     {
-                        _onMessageReceived.OnNext(message.Replace("\n", "").ToString());
+                        var sessionMessage = new UnityTcpSessionMessage(session.Id, message.Replace("\n", "").ToString());
+                        _onMessageReceived.OnNext(sessionMessage);
                         message = null; // リソース解放
 
                         // 再度データ受け取り待ちに
