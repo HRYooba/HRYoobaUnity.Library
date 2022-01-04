@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Net.Sockets;
 
 namespace HRYooba.Library.Network
@@ -8,6 +9,7 @@ namespace HRYooba.Library.Network
         public UnityTcpSession(TcpClient client)
         {
             Id = Guid.NewGuid();
+            IPAddress = ((IPEndPoint)client.Client.LocalEndPoint).Address;
             Client = client;
         }
 
@@ -17,6 +19,7 @@ namespace HRYooba.Library.Network
         }
 
         public Guid Id { get; }
+        public IPAddress IPAddress { get; }
         internal TcpClient Client { get; }
 
         public void Dispose()
