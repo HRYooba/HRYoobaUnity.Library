@@ -9,7 +9,7 @@ namespace HRYooba.Library.Network
         public UnityTcpSession(TcpClient client)
         {
             Id = Guid.NewGuid();
-            IPAddress = ((IPEndPoint)client.Client.LocalEndPoint).Address;
+            IPAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address;
             Client = client;
         }
 
