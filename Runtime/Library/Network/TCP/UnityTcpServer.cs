@@ -53,7 +53,10 @@ namespace HRYooba.Library.Network
             _listener = new TcpListener(localEndPoint);
             _listener.Start();
 
-            _cancellation = new CancellationTokenSource();
+            if (_cancellation == null)
+            {
+                _cancellation = new CancellationTokenSource();
+            }
 
             // 別スレッドで接続待機を行う
             Task.Run(() => Listen(_cancellation.Token));

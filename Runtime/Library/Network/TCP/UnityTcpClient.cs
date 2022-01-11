@@ -12,6 +12,7 @@ namespace HRYooba.Library.Network
     public class UnityTcpClient : IDisposable
     {
         private const int BufferSize = 1024;
+        private const int TimeOutMilliSec = 5000;
 
         private TcpClient _client;
         private CancellationTokenSource _cancellation;
@@ -41,17 +42,36 @@ namespace HRYooba.Library.Network
 
         public void Connect(string ipAddress, int port)
         {
-            try
+            if (_cancellation == null)
             {
-                _client = new TcpClient(ipAddress, port);
                 _cancellation = new CancellationTokenSource();
-                var task = Task.Run(() => Receive(_cancellation.Token));
-                Debug.Log($"UnityTcpClient connect server({ipAddress}:{port})");
             }
-            catch (SocketException)
+
+            _client = new TcpClient();
+            var connect = Task.Run(() =>
             {
-                Debug.LogWarning($"UnityTcpClient not connect server({ipAddress}:{port})");
-            }
+                try
+                {
+                    var task = _client.ConnectAsync(ipAddress, port);
+                    if (task.Wait(TimeOutMilliSec, _cancellation.Token))
+                    {
+                        Debug.Log($"UnityTcpClient connect server({ipAddress}:{port})");
+                        var dataReceive = Task.Run(() => Receive(_cancellation.Token));
+                    }
+                    else
+                    {
+                        _client.Dispose();
+                        _client = null;
+                        throw new SocketException(10060);
+                    }
+
+                }
+                catch (SocketException ex)
+                {
+                    Debug.LogWarning($"UnityTcpClient can't connect server({ipAddress}:{port}) timeout");
+                    throw ex;
+                }
+            });
         }
 
         public void Disconnect()
