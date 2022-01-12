@@ -12,17 +12,18 @@ namespace HRYooba.Library.Network
     public class UnityTcpClient : IDisposable
     {
         private const int BufferSize = 1024;
-        private const int TimeOutMilliSec = 5000;
 
         private TcpClient _client;
         private CancellationTokenSource _cancellation;
 
         private Subject<string> _onMessageReceived = new Subject<string>();
-        private Subject<IPEndPoint> _onServerClosed = new Subject<IPEndPoint>();
+        private Subject<(string IpAddress, int Port)> _onServerClosed = new Subject<(string, int)>();
+        private Subject<(string IpAddress, int Port, bool IsConnect)> _onConnected = new Subject<(string, int, bool)>();
 
         public UnityTcpClient()
         {
-            OnServerClosed.Subscribe(endPoint => Debug.Log($"Server({endPoint.Address}:{endPoint.Port}) closed."));
+            OnServerClosed.Subscribe(endPoint => Debug.Log($"Server({endPoint.IpAddress}:{endPoint.Port}) closed."));
+            OnConnected.Subscribe(connectData => Debug.Log($"Server({connectData.IpAddress}:{connectData.Port}) connect " + (connectData.IsConnect ? "success." : "failed.")));
         }
 
         ~UnityTcpClient()
@@ -35,9 +36,14 @@ namespace HRYooba.Library.Network
             get { return _onMessageReceived.ObserveOnMainThread(); }
         }
 
-        public IObservable<IPEndPoint> OnServerClosed
+        public IObservable<(string IpAddress, int Port)> OnServerClosed
         {
             get { return _onServerClosed.ObserveOnMainThread(); }
+        }
+
+        public IObservable<(string IpAddress, int Port, bool IsConnect)> OnConnected
+        {
+            get { return _onConnected.ObserveOnMainThread(); }
         }
 
         public void Connect(string ipAddress, int port)
@@ -48,29 +54,14 @@ namespace HRYooba.Library.Network
             }
 
             _client = new TcpClient();
-            var connect = Task.Run(() =>
+            var connectTask = Task.Run(() =>
             {
-                try
-                {
-                    var task = _client.ConnectAsync(ipAddress, port);
-                    if (task.Wait(TimeOutMilliSec, _cancellation.Token))
-                    {
-                        Debug.Log($"UnityTcpClient connect server({ipAddress}:{port})");
-                        var dataReceive = Task.Run(() => Receive(_cancellation.Token));
-                    }
-                    else
-                    {
-                        _client.Dispose();
-                        _client = null;
-                        throw new SocketException(10060);
-                    }
-
-                }
-                catch (SocketException ex)
-                {
-                    Debug.LogWarning($"UnityTcpClient can't connect server({ipAddress}:{port}) timeout");
-                    throw ex;
-                }
+                _client.Connect(ipAddress, port);
+                var receiveTask = ReceiveAsync(_cancellation.Token);
+            });
+            connectTask.ContinueWith(completeTask =>
+            {
+                _onConnected.OnNext((ipAddress, port, _client.Connected));
             });
         }
 
@@ -109,9 +100,12 @@ namespace HRYooba.Library.Network
 
             _onServerClosed.Dispose();
             _onServerClosed = null;
+
+            _onConnected.Dispose();
+            _onConnected = null;
         }
 
-        private async Task Receive(CancellationToken cancellationToken)
+        private async Task ReceiveAsync(CancellationToken cancellationToken)
         {
             // データ受け取り
             try
@@ -133,7 +127,8 @@ namespace HRYooba.Library.Network
                     else
                     {
                         // サーバークローズ
-                        _onServerClosed.OnNext((IPEndPoint)_client.Client.RemoteEndPoint);
+                        var serverEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
+                        _onServerClosed.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
 
                         Disconnect();
                         break;
@@ -146,7 +141,7 @@ namespace HRYooba.Library.Network
                         message = null; // リソース解放
 
                         // 再度データ受け取り待ちに
-                        var task = Task.Run(() => Receive(cancellationToken));
+                        var task = Task.Run(() => ReceiveAsync(cancellationToken));
 
                         // データ受け取りスレッド終了
                         break;

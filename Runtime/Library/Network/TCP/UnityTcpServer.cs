@@ -21,7 +21,7 @@ namespace HRYooba.Library.Network
 
         private Subject<UnityTcpSession> _onSessionConnected = new Subject<UnityTcpSession>();
         private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
-        private Subject<UnityTcpSessionMessage> _onMessageReceived = new Subject<UnityTcpSessionMessage>();
+        private Subject<(Guid Id, string Message)> _onMessageReceived = new Subject<(Guid, string)>();
 
         public UnityTcpServer() { }
 
@@ -40,7 +40,7 @@ namespace HRYooba.Library.Network
             get { return _onSessionDisconnected.ObserveOnMainThread(); }
         }
 
-        public IObservable<UnityTcpSessionMessage> OnMessageReceived
+        public IObservable<(Guid Id, string Message)> OnMessageReceived
         {
             get { return _onMessageReceived.ObserveOnMainThread(); }
         }
@@ -59,7 +59,7 @@ namespace HRYooba.Library.Network
             }
 
             // 別スレッドで接続待機を行う
-            Task.Run(() => Listen(_cancellation.Token));
+            var listenTask = ListenAsync(_cancellation.Token);
         }
 
         public void Close()
@@ -127,7 +127,7 @@ namespace HRYooba.Library.Network
             _onMessageReceived = null;
         }
 
-        private async Task Listen(CancellationToken cancellationToken)
+        private async Task ListenAsync(CancellationToken cancellationToken)
         {
             // クライアントの接続を常に待機
             while (true)
@@ -141,7 +141,7 @@ namespace HRYooba.Library.Network
                     _onSessionConnected.OnNext(session);
 
                     // 別スレッドでデータの受け取りを行う
-                    var task = Task.Run(() => Receive(session, cancellationToken));
+                    var receiveTask = ReceiveAsync(session, cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -151,7 +151,7 @@ namespace HRYooba.Library.Network
             }
         }
 
-        private async Task Receive(UnityTcpSession session, CancellationToken cancellationToken)
+        private async Task ReceiveAsync(UnityTcpSession session, CancellationToken cancellationToken)
         {
             // データ受け取り
             try
@@ -182,12 +182,11 @@ namespace HRYooba.Library.Network
                     // データ終了文字があれば読み取り完了
                     if (message.ToString().Contains("\n"))
                     {
-                        var sessionMessage = new UnityTcpSessionMessage(session.Id, message.Replace("\n", "").ToString());
-                        _onMessageReceived.OnNext(sessionMessage);
+                        _onMessageReceived.OnNext((session.Id, message.Replace("\n", "").ToString()));
                         message = null; // リソース解放
 
                         // 再度データ受け取り待ちに
-                        var task = Task.Run(() => Receive(session, cancellationToken));
+                        var receiveTask = ReceiveAsync(session, cancellationToken);
 
                         // データ受け取りスレッド終了
                         break;

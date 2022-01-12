@@ -27,16 +27,4 @@ namespace HRYooba.Library.Network
             Client.Dispose();
         }
     }
-
-    public struct UnityTcpSessionMessage
-    {
-        public UnityTcpSessionMessage(Guid id, string message)
-        {
-            Id = id;
-            Message = message;
-        }
-
-        public Guid Id { get; }
-        public string Message { get; }
-    }
 }
