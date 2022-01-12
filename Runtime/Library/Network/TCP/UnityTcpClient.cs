@@ -57,7 +57,7 @@ namespace HRYooba.Library.Network
             var connectTask = Task.Run(() =>
             {
                 _client.Connect(ipAddress, port);
-                var receiveTask = ReceiveAsync(_cancellation.Token);
+                var receiveTask = Task.Run(() => ReceiveAsync(_cancellation.Token));
             });
             connectTask.ContinueWith(completeTask =>
             {
@@ -67,7 +67,7 @@ namespace HRYooba.Library.Network
 
         public void Disconnect()
         {
-            if (_client != null)
+            if (_client != null && _client.Client != null && _client.Client.RemoteEndPoint != null)
             {
                 var ipAddress = ((IPEndPoint)_client.Client.RemoteEndPoint).Address;
                 var port = ((IPEndPoint)_client.Client.RemoteEndPoint).Port;
@@ -141,7 +141,7 @@ namespace HRYooba.Library.Network
                         message = null; // リソース解放
 
                         // 再度データ受け取り待ちに
-                        var task = Task.Run(() => ReceiveAsync(cancellationToken));
+                        var receiveTask = Task.Run(() => ReceiveAsync(cancellationToken));
 
                         // データ受け取りスレッド終了
                         break;

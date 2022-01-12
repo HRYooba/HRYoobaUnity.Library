@@ -59,7 +59,7 @@ namespace HRYooba.Library.Network
             }
 
             // 別スレッドで接続待機を行う
-            var listenTask = ListenAsync(_cancellation.Token);
+            var listenTask = Task.Run(() => ListenAsync(_cancellation.Token));
         }
 
         public void Close()
@@ -141,7 +141,7 @@ namespace HRYooba.Library.Network
                     _onSessionConnected.OnNext(session);
 
                     // 別スレッドでデータの受け取りを行う
-                    var receiveTask = ReceiveAsync(session, cancellationToken);
+                    var receiveTask = Task.Run(() => ReceiveAsync(session, cancellationToken));
                 }
                 catch (Exception ex)
                 {
