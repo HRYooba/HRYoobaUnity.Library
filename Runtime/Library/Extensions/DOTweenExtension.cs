@@ -7,14 +7,6 @@ namespace HRYooba.Library
 {
     public static class DOTweenExtension
     {
-        public static void KillIfIsTweening(this DOTween target, object targetOrId, bool complete = false, bool alsoCheckIfIsPlaying = false)
-        {
-            if (DOTween.IsTweening(targetOrId, alsoCheckIfIsPlaying))
-            {
-                DOTween.Kill(targetOrId, complete);
-            }
-        }
-
         public static Tween DOFloat(this FloatTweenProperty target, float endValue, float duration)
         {
             return DOTween.To(() => target.Value, value => target.Value = value, endValue, duration);
