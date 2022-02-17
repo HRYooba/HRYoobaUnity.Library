@@ -182,7 +182,11 @@ namespace HRYooba.Library.Network
                     // データ終了文字があれば読み取り完了
                     if (message.ToString().Contains("\n"))
                     {
-                        _onMessageReceived.OnNext((session.Id, message.Replace("\n", "").ToString()));
+                        var dataArray = message.ToString().Split('\n');
+                        foreach (var data in dataArray)
+                        {
+                            _onMessageReceived.OnNext((session.Id, data.Replace("\n", "").ToString()));
+                        }
                         message = null; // リソース解放
 
                         // 再度データ受け取り待ちに
