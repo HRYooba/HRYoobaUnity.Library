@@ -137,10 +137,13 @@ namespace HRYooba.Library.Network
                     // データ終了文字があれば読み取り完了
                     if (message.ToString().Contains("\n"))
                     {
-                        var dataArray = message.ToString().Split('\n');
+                        var dataArray = message.ToString().Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
                         foreach (var data in dataArray)
                         {
-                            _onMessageReceived.OnNext(data.Replace("\n", "").ToString());
+                            if (data.Length > 0)
+                            {
+                                _onMessageReceived.OnNext(data.Replace("\n", "").ToString());
+                            }
                         }
                         message = null; // リソース解放
 

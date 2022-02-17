@@ -185,7 +185,10 @@ namespace HRYooba.Library.Network
                         var dataArray = message.ToString().Split('\n');
                         foreach (var data in dataArray)
                         {
-                            _onMessageReceived.OnNext((session.Id, data.Replace("\n", "").ToString()));
+                            if (data.Length > 0)
+                            {
+                                _onMessageReceived.OnNext((session.Id, data.Replace("\n", "").ToString()));
+                            }
                         }
                         message = null; // リソース解放
 
