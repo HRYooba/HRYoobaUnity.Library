@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
@@ -9,7 +8,7 @@ using UniRx;
 
 namespace HRYooba.Library.Network
 {
-    public class UnityTcpClient : IDisposable
+    public class UnityTcpClient : System.IDisposable
     {
         private const int BufferSize = 1024;
 
@@ -31,17 +30,17 @@ namespace HRYooba.Library.Network
             Dispose();
         }
 
-        public IObservable<string> OnMessageReceived
+        public System.IObservable<string> OnMessageReceived
         {
             get { return _onMessageReceived.ObserveOnMainThread(); }
         }
 
-        public IObservable<(string IpAddress, int Port)> OnServerClosed
+        public System.IObservable<(string IpAddress, int Port)> OnServerClosed
         {
             get { return _onServerClosed.ObserveOnMainThread(); }
         }
 
-        public IObservable<(string IpAddress, int Port, bool IsConnect)> OnConnected
+        public System.IObservable<(string IpAddress, int Port, bool IsConnect)> OnConnected
         {
             get { return _onConnected.ObserveOnMainThread(); }
         }
@@ -137,7 +136,7 @@ namespace HRYooba.Library.Network
                     // データ終了文字があれば読み取り完了
                     if (message.ToString().Contains("\n"))
                     {
-                        var dataArray = message.ToString().Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+                        var dataArray = message.ToString().Split(new[] { "\r\n", "\n", "\r" }, System.StringSplitOptions.None);
                         foreach (var data in dataArray)
                         {
                             if (data.Length > 0)
@@ -155,7 +154,7 @@ namespace HRYooba.Library.Network
                     }
                 }
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 Debug.LogException(ex);

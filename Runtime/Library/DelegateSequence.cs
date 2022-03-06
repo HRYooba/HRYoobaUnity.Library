@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
@@ -10,7 +9,7 @@ namespace HRYooba.Library
     /// CallbackにonCompleteを持つデリゲート
     /// </summary>
     /// <param name="onComplete">コンプリート処理が入るデリゲート</param>
-    public delegate void Process(Action onComplete);
+    public delegate void Process(System.Action onComplete);
 
     /// <summary>
     /// デリゲートのCallbackでシーケンスを作るクラス
@@ -18,7 +17,7 @@ namespace HRYooba.Library
     public class DelegateSequence
     {
         private List<Process> _processList = default;
-        private Action _onComplete = default;
+        private System.Action _onComplete = default;
 
         public DelegateSequence()
         {
@@ -39,16 +38,16 @@ namespace HRYooba.Library
             return this;
         }
 
-        public DelegateSequence OnComplete(Action onComplete)
+        public DelegateSequence OnComplete(System.Action onComplete)
         {
             _onComplete = onComplete;
             return this;
         }
 
-        private IEnumerator NextProcessCoroutine(IObserver<Unit> observer)
+        private IEnumerator NextProcessCoroutine(System.IObserver<Unit> observer)
         {
             bool canNext = false;
-            Action onComplete = () => canNext = true;
+            System.Action onComplete = () => canNext = true;
 
             foreach (var process in _processList)
             {
