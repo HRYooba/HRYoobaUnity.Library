@@ -47,6 +47,12 @@ namespace HRYooba.Library.Network
 
         public void Connect(string ipAddress, int port)
         {
+            if (_client != null)
+            {
+                Debug.Log($"UnityTcpClient already connected server({ipAddress}:{port})");
+                return;
+            }
+
             if (_cancellation == null)
             {
                 _cancellation = new CancellationTokenSource();
