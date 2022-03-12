@@ -90,8 +90,17 @@ namespace HRYooba.Library.Network
 
             foreach (var session in _sessions)
             {
-                var stream = session.Client.GetStream();
-                stream.Write(buffer, 0, buffer.Length);
+                try
+                {
+                    var stream = session.Client.GetStream();
+                    stream.Write(buffer, 0, buffer.Length);
+                }
+                catch (InvalidOperationException)
+                {
+                    _onSessionDisconnected.OnNext(session);
+                    _sessions.Remove(session);
+                    session.Dispose();
+                }
             }
         }
 

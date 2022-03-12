@@ -49,7 +49,7 @@ namespace HRYooba.Library.Network
         {
             if (_client != null)
             {
-                Debug.Log($"UnityTcpClient already connected server({ipAddress}:{port})");
+                Debug.LogWarning($"UnityTcpClient already connected server({ipAddress}:{port})");
                 return;
             }
 
