@@ -21,7 +21,7 @@ namespace HRYooba.Library.Network
 
         private Subject<UnityTcpSession> _onSessionConnected = new Subject<UnityTcpSession>();
         private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
-        private Subject<(Guid Id, string Message)> _onMessageReceived = new Subject<(Guid, string)>();
+        private Subject<(UnityTcpSession, string Message)> _onMessageReceived = new Subject<(UnityTcpSession, string)>();
 
         public UnityTcpServer() { }
 
@@ -40,7 +40,7 @@ namespace HRYooba.Library.Network
             get { return _onSessionDisconnected.ObserveOnMainThread(); }
         }
 
-        public IObservable<(Guid Id, string Message)> OnMessageReceived
+        public IObservable<(UnityTcpSession Id, string Message)> OnMessageReceived
         {
             get { return _onMessageReceived.ObserveOnMainThread(); }
         }
@@ -82,6 +82,7 @@ namespace HRYooba.Library.Network
                 session.Dispose();
             }
             _sessions.Clear();
+            _sessions = null;
         }
 
         public void Send(string message)
@@ -196,7 +197,7 @@ namespace HRYooba.Library.Network
                         {
                             if (data.Length > 0)
                             {
-                                _onMessageReceived.OnNext((session.Id, data.Replace("\n", "").ToString()));
+                                _onMessageReceived.OnNext((session, data.Replace("\n", "").ToString()));
                             }
                         }
                         message = null; // リソース解放

@@ -19,12 +19,13 @@ namespace HRYooba.Library.Network
         }
 
         public Guid Id { get; }
-        public IPAddress IPAddress { get; }
-        internal TcpClient Client { get; }
+        public IPAddress IPAddress { get; private set; }
+        internal TcpClient Client { get; private set; }
 
         public void Dispose()
         {
             Client.Dispose();
+            Client = null;
         }
     }
 }
