@@ -108,12 +108,18 @@ namespace HRYooba.Library.Network
         public void Send(Guid id, string message)
         {
             var buffer = Encoding.UTF8.GetBytes(message + "\n");
+            var session = _sessions.Where(_ => _.Id == id).First();
 
             try
             {
-                var session = _sessions.Where(_ => _.Id == id).First();
                 var stream = session.Client.GetStream();
                 stream.Write(buffer, 0, buffer.Length);
+            }
+            catch (InvalidOperationException)
+            {
+                _onSessionDisconnected.OnNext(session);
+                _sessions.Remove(session);
+                session.Dispose();
             }
             catch (Exception ex)
             {
