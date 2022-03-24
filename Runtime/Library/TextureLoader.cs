@@ -8,11 +8,11 @@ namespace HRYooba.Library
 {
     public static class TextureLoader
     {
-        public static Texture2D[] LoadTextures(string directPath)
+        public static Texture2D[] LoadTextures(string directoryPath)
         {
-            if (Directory.Exists(directPath))
+            if (Directory.Exists(directoryPath))
             {
-                DirectoryInfo directoryInfo = new DirectoryInfo(directPath);
+                var directoryInfo = new DirectoryInfo(directoryPath);
                 var fileInfos = directoryInfo.GetFiles("*").Where(_ => _.Name.EndsWith(".jpg") || _.Name.EndsWith(".png"));
 
                 if (fileInfos.Count() > 0)
@@ -20,7 +20,7 @@ namespace HRYooba.Library
                     var textures = new Texture2D[fileInfos.Count()];
                     for (var i = 0; i < fileInfos.Count(); i++)
                     {
-                        var path = directPath + "/" + fileInfos.ToArray()[i].Name;
+                        var path = directoryPath + "\\" + fileInfos.ToArray()[i].Name;
                         if (File.Exists(path))
                         {
                             var bytes = File.ReadAllBytes(path);
@@ -35,22 +35,22 @@ namespace HRYooba.Library
                 }
                 else
                 {
-                    Debug.LogError("Not exists textures: " + directPath);
+                    Debug.LogError("Not exists textures: " + directoryPath);
                     return null;
                 }
             }
             else
             {
-                Debug.LogError("Not exists path: " + directPath);
+                Debug.LogError("Not exists path: " + directoryPath);
                 return null;
             }
         }
 
-        public static async Task<Texture2D[]> LoadTexturesAsync(string directPath, CancellationToken cancellationToken)
+        public static async Task<Texture2D[]> LoadTexturesAsync(string directoryPath, CancellationToken cancellationToken)
         {
-            if (Directory.Exists(directPath))
+            if (Directory.Exists(directoryPath))
             {
-                DirectoryInfo directoryInfo = new DirectoryInfo(directPath);
+                var directoryInfo = new DirectoryInfo(directoryPath);
                 var fileInfos = directoryInfo.GetFiles("*").Where(_ => _.Name.EndsWith(".jpg") || _.Name.EndsWith(".png"));
 
                 if (fileInfos.Count() > 0)
@@ -58,7 +58,7 @@ namespace HRYooba.Library
                     var textures = new Texture2D[fileInfos.Count()];
                     for (var i = 0; i < fileInfos.Count(); i++)
                     {
-                        var path = directPath + "/" + fileInfos.ToArray()[i].Name;
+                        var path = directoryPath + "\\" + fileInfos.ToArray()[i].Name;
                         if (File.Exists(path))
                         {
                             var bytes = await File.ReadAllBytesAsync(path, cancellationToken);
@@ -73,13 +73,13 @@ namespace HRYooba.Library
                 }
                 else
                 {
-                    Debug.LogError("Not exists textures: " + directPath);
+                    Debug.LogError("Not exists textures: " + directoryPath);
                     return null;
                 }
             }
             else
             {
-                Debug.LogError("Not exists path: " + directPath);
+                Debug.LogError("Not exists path: " + directoryPath);
                 return null;
             }
         }
