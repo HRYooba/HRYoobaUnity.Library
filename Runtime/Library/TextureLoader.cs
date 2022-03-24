@@ -20,12 +20,13 @@ namespace HRYooba.Library
                     var textures = new Texture2D[fileInfos.Count()];
                     for (var i = 0; i < fileInfos.Count(); i++)
                     {
-                        var path = directPath + "\\" + fileInfos.ToArray()[i].Name;
+                        var path = directPath + "/" + fileInfos.ToArray()[i].Name;
                         if (File.Exists(path))
                         {
                             var bytes = File.ReadAllBytes(path);
                             textures[i] = new Texture2D(2, 2);
                             textures[i].LoadImage(bytes);
+                            textures[i].name = fileInfos.ToArray()[i].Name;
                             Debug.Log("Load texture: " + path);
                         }
                     }
@@ -57,12 +58,13 @@ namespace HRYooba.Library
                     var textures = new Texture2D[fileInfos.Count()];
                     for (var i = 0; i < fileInfos.Count(); i++)
                     {
-                        var path = directPath + "\\" + fileInfos.ToArray()[i].Name;
+                        var path = directPath + "/" + fileInfos.ToArray()[i].Name;
                         if (File.Exists(path))
                         {
                             var bytes = await File.ReadAllBytesAsync(path, cancellationToken);
                             textures[i] = new Texture2D(2, 2);
                             textures[i].LoadImage(bytes);
+                            textures[i].name = fileInfos.ToArray()[i].Name;
                             Debug.Log("Load texture: " + path);
                         }
                     }
