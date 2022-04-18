@@ -21,7 +21,7 @@ namespace HRYooba.Library.Network
 
         private Subject<UnityTcpSession> _onSessionConnected = new Subject<UnityTcpSession>();
         private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
-        private Subject<(UnityTcpSession, string Message)> _onMessageReceived = new Subject<(UnityTcpSession, string)>();
+        private Subject<(UnityTcpSession Session, string Message)> _onMessageReceived = new Subject<(UnityTcpSession, string)>();
 
         public UnityTcpServer() { }
 
@@ -40,7 +40,7 @@ namespace HRYooba.Library.Network
             get { return _onSessionDisconnected.ObserveOnMainThread(); }
         }
 
-        public IObservable<(UnityTcpSession Id, string Message)> OnMessageReceived
+        public IObservable<(UnityTcpSession Session, string Message)> OnMessageReceived
         {
             get { return _onMessageReceived.ObserveOnMainThread(); }
         }
@@ -105,10 +105,9 @@ namespace HRYooba.Library.Network
             }
         }
 
-        public void Send(Guid id, string message)
+        public void Send(UnityTcpSession session, string message)
         {
             var buffer = Encoding.UTF8.GetBytes(message + "\n");
-            var session = _sessions.Where(_ => _.Id == id).First();
 
             try
             {
