@@ -1,11 +1,17 @@
 {
   "name": "com.hryooba.library",
   "displayName": "HRYoobaLibrary",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "unity": "2021.2",
   "description": "Unity HRYooba Library",
   "author": {
     "name": "HRYooba"
   },
-  "type": "library"
+  "type": "library",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "jillejr.newtonsoft.json-for-unity.converters": "1.4.0",
+    "com.demigiant.dotween": "1.2.632",
+    "com.neuecc.unirx": "7.1.0"
+  }
 }

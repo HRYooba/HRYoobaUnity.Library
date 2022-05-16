@@ -1,22 +1,21 @@
 # HRYoobaUnityLibrary
-HRYoobaUnityLibrary
+## 1.インストール
+`https://github.com/HRYooba/HRYoobaUnityLibrary.git`
 
-## 1.依存外部ライブラリ
-- Unirx
-- DOTween
-
-## 2.設定
+## 2.依存ライブラリ
+以下のスコープを追加してください。
 ```json
-"scopedRegistries": [
+  "scopedRegistries": [
     {
-        "name": "package.openupm.com",
-        "url": "https://package.openupm.com",
-        "scopes": [
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.openupm",
         "com.demigiant.dotween",
         "com.neuecc.unirx",
-        "com.openupm"
-        ]
+        "jillejr.newtonsoft.json-for-unity.converters"
+      ]
     }
-]
+  ]
 ```
 
