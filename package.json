@@ -1,9 +1,9 @@
 {
   "name": "com.hryooba.library",
   "displayName": "HRYoobaLibrary",
-  "version": "1.4.2",
-  "unity": "2020.3",
-  "description": "Unity\u306e\u5927\u5834\u5c02\u7528\u30d1\u30c3\u30b1\u30fc\u30b8",
+  "version": "1.4.3",
+  "unity": "2021.2",
+  "description": "Unity HRYooba Library",
   "author": {
     "name": "HRYooba"
   },
