@@ -163,7 +163,7 @@ namespace HRYooba.Library.Network
             catch (System.Exception ex)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                Debug.LogException(ex);
+                throw ex;
             }
         }
     }

@@ -122,7 +122,7 @@ namespace HRYooba.Library.Network
             }
             catch (Exception ex)
             {
-                Debug.LogException(ex);
+                throw ex;
             }
         }
 
@@ -161,7 +161,7 @@ namespace HRYooba.Library.Network
                 catch (Exception ex)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    Debug.LogException(ex);
+                    throw ex;
                 }
             }
         }
@@ -218,7 +218,7 @@ namespace HRYooba.Library.Network
             catch (Exception ex)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                Debug.LogException(ex);
+                throw ex;
             }
         }
     }
