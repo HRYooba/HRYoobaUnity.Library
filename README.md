@@ -11,7 +11,6 @@
       "url": "https://package.openupm.com",
       "scopes": [
         "com.openupm",
-        "com.demigiant.dotween",
         "com.neuecc.unirx",
         "jillejr.newtonsoft.json-for-unity.converters"
       ]
