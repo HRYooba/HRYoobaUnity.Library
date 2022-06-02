@@ -66,11 +66,11 @@ namespace HRYooba.Library.Network
             });
             connectTask.ContinueWith(completeTask =>
             {
+                _onConnected.OnNext((ipAddress, port, _client.Connected));
                 if (!_client.Connected)
                 {
                     Disconnect();
                 }
-                _onConnected.OnNext((ipAddress, port, _client.Connected));
             });
         }
 
