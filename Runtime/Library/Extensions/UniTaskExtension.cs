@@ -6,7 +6,7 @@ namespace HRYooba.Library
 {
     public static class UniTaskExtention
     {
-        public static UniTaskCompletionSource ToComplitionSource(this UniTask self)
+        public static UniTaskCompletionSource ToUniTaskCompletionSource(this UniTask self)
         {
             var utcs = new UniTaskCompletionSource();
             UniTask.Create(async () =>
