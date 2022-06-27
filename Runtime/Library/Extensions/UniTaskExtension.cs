@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 
 namespace HRYooba.Library
 {
-    public static class UniTaskExtention
+    public static class UniTaskExtension
     {
         public static UniTaskCompletionSource ToUniTaskCompletionSource(this UniTask self)
         {

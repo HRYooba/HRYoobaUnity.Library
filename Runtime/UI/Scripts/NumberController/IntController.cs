@@ -52,6 +52,8 @@ namespace HRYooba.UI
         private void Awake()
         {
             // ReactiveProperty
+            _maxValue.Subscribe(value => _slider.maxValue = value).AddTo(gameObject);
+            _minValue.Subscribe(value => _slider.minValue = value).AddTo(gameObject);
             _title.Subscribe(value =>
             {
                 gameObject.name = value;
@@ -62,8 +64,6 @@ namespace HRYooba.UI
                 _slider.value = value;
                 _inputField.text = value.ToString();
             }).AddTo(gameObject);
-            _maxValue.Subscribe(value => _slider.maxValue = value).AddTo(gameObject);
-            _minValue.Subscribe(value => _slider.minValue = value).AddTo(gameObject);
 
             // Unity UI
             _slider.OnValueChangedAsObservable().Subscribe(value => _value.Value = (int)value).AddTo(gameObject);

@@ -52,6 +52,18 @@ namespace HRYooba.UI
         private void Awake()
         {
             // ReactiveProperty
+            _maxValue.Subscribe(value =>
+            {
+                _sliders[0].maxValue = value.x;
+                _sliders[1].maxValue = value.y;
+                _sliders[2].maxValue = value.z;
+            }).AddTo(gameObject);
+            _minValue.Subscribe(value =>
+            {
+                _sliders[0].minValue = value.x;
+                _sliders[1].minValue = value.y;
+                _sliders[2].minValue = value.z;
+            }).AddTo(gameObject);
             _title.Subscribe(value =>
             {
                 gameObject.name = value;
@@ -67,18 +79,6 @@ namespace HRYooba.UI
                 _inputFields[0].text = value.x.ToString();
                 _inputFields[1].text = value.y.ToString();
                 _inputFields[2].text = value.z.ToString();
-            }).AddTo(gameObject);
-            _maxValue.Subscribe(value =>
-            {
-                _sliders[0].maxValue = value.x;
-                _sliders[1].maxValue = value.y;
-                _sliders[2].maxValue = value.z;
-            }).AddTo(gameObject);
-            _minValue.Subscribe(value =>
-            {
-                _sliders[0].minValue = value.x;
-                _sliders[1].minValue = value.y;
-                _sliders[2].minValue = value.z;
             }).AddTo(gameObject);
 
             // Unity UI
