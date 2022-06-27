@@ -11,7 +11,8 @@
       "url": "https://package.openupm.com",
       "scopes": [
         "com.neuecc.unirx",
-        "jillejr.newtonsoft.json-for-unity.converters"
+        "jillejr.newtonsoft.json-for-unity.converters",
+        "com.cysharp.unitask"
       ]
     }
   ]
