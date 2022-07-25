@@ -127,7 +127,7 @@ namespace HRYooba.Library.Network
                     cancellationToken.ThrowIfCancellationRequested();
 
                     var buffer = new byte[BufferSize];
-                    var bytesRead = await stream.ReadAsync(buffer, 0, BufferSize);
+                    var bytesRead = await stream.ReadAsync(buffer, 0, BufferSize, cancellationToken);
 
                     if (bytesRead > 0)
                     {
@@ -164,10 +164,9 @@ namespace HRYooba.Library.Network
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                throw ex;
+                throw;
             }
         }
     }

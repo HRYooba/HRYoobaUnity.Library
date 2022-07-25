@@ -102,6 +102,10 @@ namespace HRYooba.Library.Network
                     _sessions.Remove(session);
                     session.Dispose();
                 }
+                catch
+                {
+                    throw;
+                }
             }
         }
 
@@ -120,9 +124,9 @@ namespace HRYooba.Library.Network
                 _sessions.Remove(session);
                 session.Dispose();
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -158,10 +162,9 @@ namespace HRYooba.Library.Network
                     // 別スレッドでデータの受け取りを行う
                     var receiveTask = Task.Run(() => ReceiveAsync(session, cancellationToken));
                 }
-                catch (Exception ex)
+                catch
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -179,7 +182,7 @@ namespace HRYooba.Library.Network
                     cancellationToken.ThrowIfCancellationRequested();
 
                     var buffer = new byte[BufferSize];
-                    var bytesRead = await stream.ReadAsync(buffer, 0, BufferSize);
+                    var bytesRead = await stream.ReadAsync(buffer, 0, BufferSize, cancellationToken);
 
                     if (bytesRead > 0)
                     {
@@ -215,10 +218,9 @@ namespace HRYooba.Library.Network
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                throw ex;
+                throw;
             }
         }
     }

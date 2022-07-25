@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace HRYooba.UI
 {
-    public class SettingCanvasTabsController : MonoBehaviour
+    public class DebuggerCanvasTabsController : MonoBehaviour
     {
         [SerializeField] Button[] _tabs = null;
         [SerializeField] CanvasGroup[] _windows = null;
