@@ -1,6 +1,11 @@
 # HRYoobaUnityLibrary
 ## 1.インストール
-`https://github.com/HRYooba/HRYoobaUnityLibrary.git`
+ProjectSetting/PackageManagerから以下のScopeRegistriesを設定
+- Name: `package.openupm.com`
+- URL: `https://package.openupm.com`
+- Scope: `com.hryooba.library`
+
+PackageManagerからMyRegistriesを選択しパッケージを入れる。
 
 ## 2.依存ライブラリ
 以下のスコープを追加してください。
@@ -12,7 +17,7 @@
       "scopes": [
         "com.neuecc.unirx",
         "jillejr.newtonsoft.json-for-unity.converters",
-        "com.cysharp.unitask"
+        "com.cysharp"
       ]
     }
   ]
