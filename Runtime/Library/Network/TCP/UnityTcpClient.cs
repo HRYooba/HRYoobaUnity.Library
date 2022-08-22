@@ -14,15 +14,21 @@ namespace HRYooba.Library.Network
 
         private TcpClient _client;
         private CancellationTokenSource _cancellation;
+        private CompositeDisposable _disposables = new();
+        private bool _useDebugLog;
 
         private Subject<string> _onMessageReceived = new Subject<string>();
         private Subject<(string IpAddress, int Port)> _onServerClosed = new Subject<(string, int)>();
         private Subject<(string IpAddress, int Port, bool IsConnect)> _onConnected = new Subject<(string, int, bool)>();
 
-        public UnityTcpClient()
+        public UnityTcpClient(bool useDebugLog = true)
         {
-            OnServerClosed.Subscribe(endPoint => Debug.Log($"Server({endPoint.IpAddress}:{endPoint.Port}) closed."));
-            OnConnected.Subscribe(connectData => Debug.Log($"Server({connectData.IpAddress}:{connectData.Port}) connect " + (connectData.IsConnect ? "success." : "failed.")));
+            _useDebugLog = useDebugLog;
+            if (_useDebugLog)
+            {
+                OnServerClosed.Subscribe(endPoint => Debug.Log($"Server({endPoint.IpAddress}:{endPoint.Port}) closed.")).AddTo(_disposables);
+                OnConnected.Subscribe(connectData => Debug.Log($"Server({connectData.IpAddress}:{connectData.Port}) connect " + (connectData.IsConnect ? "success." : "failed."))).AddTo(_disposables);
+            }
         }
 
         ~UnityTcpClient()
@@ -49,7 +55,7 @@ namespace HRYooba.Library.Network
         {
             if (_client != null)
             {
-                Debug.LogWarning($"UnityTcpClient already connected server({ipAddress}:{port})");
+                if (_useDebugLog) Debug.LogWarning($"UnityTcpClient already connected server({ipAddress}:{port})");
                 return;
             }
 
@@ -80,7 +86,7 @@ namespace HRYooba.Library.Network
             {
                 var ipAddress = ((IPEndPoint)_client.Client.RemoteEndPoint).Address;
                 var port = ((IPEndPoint)_client.Client.RemoteEndPoint).Port;
-                Debug.Log($"UnityTcpClient disconnect server({ipAddress}:{port})");
+                if (_useDebugLog) Debug.Log($"UnityTcpClient disconnect server({ipAddress}:{port})");
             }
 
             _client?.Dispose();
@@ -103,6 +109,8 @@ namespace HRYooba.Library.Network
         public void Dispose()
         {
             Disconnect();
+
+            _disposables.Dispose();
 
             _onMessageReceived.Dispose();
             _onMessageReceived = null;

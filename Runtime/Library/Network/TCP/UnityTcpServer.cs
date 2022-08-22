@@ -18,12 +18,16 @@ namespace HRYooba.Library.Network
         private TcpListener _listener;
         private List<UnityTcpSession> _sessions = new List<UnityTcpSession>();
         private CancellationTokenSource _cancellation;
+        private bool _useDebugLog;
 
         private Subject<UnityTcpSession> _onSessionConnected = new Subject<UnityTcpSession>();
         private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
         private Subject<(UnityTcpSession Session, string Message)> _onMessageReceived = new Subject<(UnityTcpSession, string)>();
 
-        public UnityTcpServer() { }
+        public UnityTcpServer(bool useDebugLog = true)
+        {
+            _useDebugLog = useDebugLog;
+        }
 
         ~UnityTcpServer()
         {
@@ -47,7 +51,7 @@ namespace HRYooba.Library.Network
 
         public void Open(int port)
         {
-            Debug.Log($"UnityTcpServer port({port}) open.");
+            if (_useDebugLog) Debug.Log($"UnityTcpServer port({port}) open.");
 
             var localEndPoint = new IPEndPoint(IPAddress.Any, port);
             _listener = new TcpListener(localEndPoint);
@@ -67,7 +71,7 @@ namespace HRYooba.Library.Network
             if (_listener != null)
             {
                 var port = ((IPEndPoint)_listener.LocalEndpoint).Port;
-                Debug.Log($"UnityTcpServer port({port}) close.");
+                if (_useDebugLog) Debug.Log($"UnityTcpServer port({port}) close.");
             }
 
             _cancellation?.Cancel();
