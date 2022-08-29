@@ -24,7 +24,7 @@ namespace HRYooba.Library.Network
         private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
         private Subject<(UnityTcpSession Session, string Message)> _onMessageReceived = new Subject<(UnityTcpSession, string)>();
 
-        public UnityTcpServer(bool useDebugLog = true)
+        public UnityTcpServer(bool useDebugLog = false)
         {
             _useDebugLog = useDebugLog;
         }

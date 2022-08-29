@@ -21,7 +21,7 @@ namespace HRYooba.Library.Network
         private Subject<(string IpAddress, int Port)> _onServerClosed = new Subject<(string, int)>();
         private Subject<(string IpAddress, int Port, bool IsConnect)> _onConnected = new Subject<(string, int, bool)>();
 
-        public UnityTcpClient(bool useDebugLog = true)
+        public UnityTcpClient(bool useDebugLog = false)
         {
             _useDebugLog = useDebugLog;
             if (_useDebugLog)
