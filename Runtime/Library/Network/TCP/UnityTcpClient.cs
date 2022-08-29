@@ -51,6 +51,11 @@ namespace HRYooba.Library.Network
             get { return _onConnected.ObserveOnMainThread(); }
         }
 
+        public bool IsConnected
+        {
+            get { return _client == null ? false : _client.Connected; }
+        }
+
         public void Connect(string ipAddress, int port)
         {
             if (_client != null)
@@ -63,21 +68,8 @@ namespace HRYooba.Library.Network
             {
                 _cancellation = new CancellationTokenSource();
             }
-
-            _client = new TcpClient();
-            var connectTask = Task.Run(() =>
-            {
-                _client.Connect(ipAddress, port);
-                var receiveTask = Task.Run(() => ReceiveAsync(_cancellation.Token));
-            });
-            connectTask.ContinueWith(completeTask =>
-            {
-                _onConnected.OnNext((ipAddress, port, _client.Connected));
-                if (!_client.Connected)
-                {
-                    Disconnect();
-                }
-            });
+            
+            var connectTask = ConnectAsync(ipAddress, port, _cancellation.Token);
         }
 
         public void Disconnect()
@@ -120,6 +112,25 @@ namespace HRYooba.Library.Network
 
             _onConnected.Dispose();
             _onConnected = null;
+        }
+
+        private async Task ConnectAsync(string ipAddress, int port, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _client = new TcpClient();
+                await _client.ConnectAsync(ipAddress, port);
+                _onConnected.OnNext((ipAddress, port, true));
+            }
+            catch
+            {
+                _onConnected.OnNext((ipAddress, port, false));
+                Disconnect();
+                throw;
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var receiveTask = Task.Run(() => ReceiveAsync(_cancellation.Token));
         }
 
         private async Task ReceiveAsync(CancellationToken cancellationToken)
