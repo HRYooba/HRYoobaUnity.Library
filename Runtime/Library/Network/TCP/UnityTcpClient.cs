@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
@@ -68,7 +69,7 @@ namespace HRYooba.Library.Network
             {
                 _cancellation = new CancellationTokenSource();
             }
-            
+
             var connectTask = ConnectAsync(ipAddress, port, _cancellation.Token);
         }
 
@@ -94,8 +95,17 @@ namespace HRYooba.Library.Network
             if (_client == null) return;
 
             var buffer = Encoding.UTF8.GetBytes(message + "\n");
-            var stream = _client.GetStream();
-            stream.Write(buffer, 0, buffer.Length);
+            try
+            {
+                var stream = _client.GetStream();
+                stream.Write(buffer, 0, buffer.Length);
+            }
+            catch (InvalidOperationException)
+            {
+                SendServerClosed();
+                Disconnect();
+                throw;
+            }
         }
 
         public void Dispose()
@@ -112,6 +122,12 @@ namespace HRYooba.Library.Network
 
             _onConnected.Dispose();
             _onConnected = null;
+        }
+
+        private void SendServerClosed()
+        {
+            var serverEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
+            _onServerClosed.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
         }
 
         private async Task ConnectAsync(string ipAddress, int port, CancellationToken cancellationToken)
@@ -139,7 +155,7 @@ namespace HRYooba.Library.Network
             try
             {
                 var stream = _client.GetStream();
-                var message = new StringBuilder();
+                var dataBuilder = new StringBuilder();
 
                 while (true)
                 {
@@ -150,30 +166,39 @@ namespace HRYooba.Library.Network
 
                     if (bytesRead > 0)
                     {
-                        message.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+                        dataBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
                     }
                     else
                     {
                         // サーバークローズ
-                        var serverEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
-                        _onServerClosed.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
-
+                        SendServerClosed();
                         Disconnect();
                         break;
                     }
 
                     // データ終了文字があれば読み取り完了
-                    if (message.ToString().Contains("\n"))
+                    if (dataBuilder.ToString().Contains("\n"))
                     {
-                        var dataArray = message.ToString().Split(new[] { "\r\n", "\n", "\r" }, System.StringSplitOptions.None);
+                        var dataArray = dataBuilder.ToString().Split(new[] { "\r\n", "\n", "\r" }, System.StringSplitOptions.None);
                         foreach (var data in dataArray)
                         {
                             if (data.Length > 0)
                             {
-                                _onMessageReceived.OnNext(data.Replace("\n", "").ToString());
+                                var message = data.Replace("\n", "").ToString();
+
+                                // サーバークローズのメッセージなら
+                                if (message == "unityTcpServerClose")
+                                {
+                                    SendServerClosed();
+                                    Disconnect();
+                                }
+                                else
+                                {
+                                    _onMessageReceived.OnNext(message);
+                                }
                             }
                         }
-                        message = null; // リソース解放
+                        dataBuilder = null; // リソース解放
 
                         // 再度データ受け取り待ちに
                         var receiveTask = Task.Run(() => ReceiveAsync(cancellationToken));

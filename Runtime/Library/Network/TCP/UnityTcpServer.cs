@@ -68,6 +68,8 @@ namespace HRYooba.Library.Network
 
         public void Close()
         {
+            Send("unityTcpServerClose");
+
             if (_listener != null)
             {
                 var port = ((IPEndPoint)_listener.LocalEndpoint).Port;
@@ -179,7 +181,7 @@ namespace HRYooba.Library.Network
             try
             {
                 var stream = session.Client.GetStream();
-                var message = new StringBuilder();
+                var dataBuilder = new StringBuilder();
 
                 while (true)
                 {
@@ -190,7 +192,7 @@ namespace HRYooba.Library.Network
 
                     if (bytesRead > 0)
                     {
-                        message.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+                        dataBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
                     }
                     else
                     {
@@ -202,17 +204,18 @@ namespace HRYooba.Library.Network
                     }
 
                     // データ終了文字があれば読み取り完了
-                    if (message.ToString().Contains("\n"))
+                    if (dataBuilder.ToString().Contains("\n"))
                     {
-                        var dataArray = message.ToString().Split('\n');
+                        var dataArray = dataBuilder.ToString().Split('\n');
                         foreach (var data in dataArray)
                         {
                             if (data.Length > 0)
                             {
-                                _onMessageReceived.OnNext((session, data.Replace("\n", "").ToString()));
+                                var message = data.Replace("\n", "").ToString();
+                                _onMessageReceived.OnNext((session, message));
                             }
                         }
-                        message = null; // リソース解放
+                        dataBuilder = null; // リソース解放
 
                         // 再度データ受け取り待ちに
                         var receiveTask = ReceiveAsync(session, cancellationToken);
