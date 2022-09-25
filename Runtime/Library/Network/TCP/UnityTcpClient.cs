@@ -102,7 +102,7 @@ namespace HRYooba.Library.Network
             }
             catch (InvalidOperationException)
             {
-                SendServerClosed();
+                PublishServerClosed();
                 Disconnect();
                 throw;
             }
@@ -124,7 +124,7 @@ namespace HRYooba.Library.Network
             _onConnected = null;
         }
 
-        private void SendServerClosed()
+        private void PublishServerClosed()
         {
             var serverEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
             _onServerClosed.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
@@ -171,7 +171,7 @@ namespace HRYooba.Library.Network
                     else
                     {
                         // サーバークローズ
-                        SendServerClosed();
+                        PublishServerClosed();
                         Disconnect();
                         break;
                     }
@@ -189,7 +189,7 @@ namespace HRYooba.Library.Network
                                 // サーバークローズのメッセージなら
                                 if (message == "unityTcpServerClose")
                                 {
-                                    SendServerClosed();
+                                    PublishServerClosed();
                                     Disconnect();
                                 }
                                 else
