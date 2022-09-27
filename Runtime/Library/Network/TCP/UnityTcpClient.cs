@@ -126,6 +126,9 @@ namespace HRYooba.Library.Network
 
         private void PublishServerClosed()
         {
+            if (_client == null) return;
+            if (_onServerClosed == null) return;
+            
             var serverEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
             _onServerClosed.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
         }
