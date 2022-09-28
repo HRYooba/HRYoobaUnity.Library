@@ -16,16 +16,16 @@ namespace HRYooba.Library.Network
         private TcpClient _client;
         private CancellationTokenSource _cancellation;
         private CompositeDisposable _disposables = new();
-        private bool _useDebugLog;
+        private bool _isShowLog;
 
         private Subject<string> _onMessageReceived = new Subject<string>();
         private Subject<(string IpAddress, int Port)> _onServerClosed = new Subject<(string, int)>();
         private Subject<(string IpAddress, int Port, bool IsConnect)> _onConnected = new Subject<(string, int, bool)>();
 
-        public UnityTcpClient(bool useDebugLog = false)
+        public UnityTcpClient(bool isShowLog = false)
         {
-            _useDebugLog = useDebugLog;
-            if (_useDebugLog)
+            _isShowLog = isShowLog;
+            if (_isShowLog)
             {
                 OnServerClosed.Subscribe(endPoint => Debug.Log($"Server({endPoint.IpAddress}:{endPoint.Port}) closed.")).AddTo(_disposables);
                 OnConnected.Subscribe(connectData => Debug.Log($"Server({connectData.IpAddress}:{connectData.Port}) connect " + (connectData.IsConnect ? "success." : "failed."))).AddTo(_disposables);
@@ -61,7 +61,7 @@ namespace HRYooba.Library.Network
         {
             if (_client != null)
             {
-                if (_useDebugLog) Debug.LogWarning($"UnityTcpClient already connected server({ipAddress}:{port})");
+                if (_isShowLog) Debug.LogWarning($"UnityTcpClient already connected server({ipAddress}:{port})");
                 return;
             }
 
@@ -79,7 +79,7 @@ namespace HRYooba.Library.Network
             {
                 var ipAddress = ((IPEndPoint)_client.Client.RemoteEndPoint).Address;
                 var port = ((IPEndPoint)_client.Client.RemoteEndPoint).Port;
-                if (_useDebugLog) Debug.Log($"UnityTcpClient disconnect server({ipAddress}:{port})");
+                if (_isShowLog) Debug.Log($"UnityTcpClient disconnect server({ipAddress}:{port})");
             }
 
             _client?.Dispose();
@@ -104,6 +104,9 @@ namespace HRYooba.Library.Network
             {
                 PublishServerClosed();
                 Disconnect();
+            }
+            catch
+            {
                 throw;
             }
         }
@@ -126,11 +129,11 @@ namespace HRYooba.Library.Network
 
         private void PublishServerClosed()
         {
-            if (_client == null) return;
-            if (_onServerClosed == null) return;
-            
-            var serverEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
-            _onServerClosed.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
+            if (_client != null && _client.Client != null && _client.Client.RemoteEndPoint != null)
+            {
+                var serverEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
+                _onServerClosed.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
+            }
         }
 
         private async Task ConnectAsync(string ipAddress, int port, CancellationToken cancellationToken)
@@ -141,10 +144,13 @@ namespace HRYooba.Library.Network
                 await _client.ConnectAsync(ipAddress, port);
                 _onConnected.OnNext((ipAddress, port, true));
             }
-            catch
+            catch (SocketException)
             {
                 _onConnected.OnNext((ipAddress, port, false));
                 Disconnect();
+            }
+            catch
+            {
                 throw;
             }
             cancellationToken.ThrowIfCancellationRequested();
