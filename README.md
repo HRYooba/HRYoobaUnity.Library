@@ -3,23 +3,10 @@
 ProjectSetting/PackageManagerから以下のScopeRegistriesを設定
 - Name: `package.openupm.com`
 - URL: `https://package.openupm.com`
-- Scope: `com.hryooba.library`
+- Scope(s): 
+  - `com.hryooba.library`,
+  - `com.neuecc.unirx`,
+  - `com.cysharp.unitask`,
+  - `jillejr.newtonsoft.json-for-unity.converters`
 
 PackageManagerからMyRegistriesを選択しパッケージを入れる。
-
-## 2.依存ライブラリ
-以下のスコープを追加してください。
-```json
-  "scopedRegistries": [
-    {
-      "name": "package.openupm.com",
-      "url": "https://package.openupm.com",
-      "scopes": [
-        "com.neuecc.unirx",
-        "jillejr.newtonsoft.json-for-unity.converters",
-        "com.cysharp"
-      ]
-    }
-  ]
-```
-
