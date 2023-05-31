@@ -66,10 +66,6 @@ namespace HRYooba.UI
 
         [SerializeField]
         [HideInInspector]
-        private bool receiveLogcatLogsInAndroid = false;
-
-        [SerializeField]
-        [HideInInspector]
         private string logcatArguments;
 
         [Header("Visuals")]
@@ -172,10 +168,6 @@ namespace HRYooba.UI
         // Required in ValidateScrollPosition() function
         private PointerEventData nullPointerEventData;
 
-#if !UNITY_EDITOR && UNITY_ANDROID
-		private DebugLogLogcatListener logcatListener;
-#endif
-
         private void Awake()
         {
             pooledLogItems = new List<DebugLogItem>();
@@ -218,16 +210,6 @@ namespace HRYooba.UI
             Application.logMessageReceived -= ReceivedLog;
             Application.logMessageReceived += ReceivedLog;
 
-            if (receiveLogcatLogsInAndroid)
-            {
-#if !UNITY_EDITOR && UNITY_ANDROID
-				if( logcatListener == null )
-					logcatListener = new DebugLogLogcatListener();
-
-				logcatListener.Start( logcatArguments );
-#endif
-            }
-
             //Debug.LogAssertion( "assert" );
             //Debug.LogError( "error" );
             //Debug.LogException( new System.IO.EndOfStreamException() );
@@ -239,11 +221,6 @@ namespace HRYooba.UI
         {
             // Stop receiving debug entries
             Application.logMessageReceived -= ReceivedLog;
-
-#if !UNITY_EDITOR && UNITY_ANDROID
-			if( logcatListener != null )
-				logcatListener.Stop();
-#endif
         }
 
         // Launch in popup mode
@@ -295,15 +272,6 @@ namespace HRYooba.UI
                 if (snapToBottomButton.activeSelf != (scrollPos > 1E-6f && scrollPos < 0.9999f))
                     snapToBottomButton.SetActive(!snapToBottomButton.activeSelf);
             }
-
-#if !UNITY_EDITOR && UNITY_ANDROID
-			if( logcatListener != null )
-			{
-				string log;
-				while( ( log = logcatListener.GetLog() ) != null )
-					ReceivedLog( "LOGCAT: " + log, string.Empty, LogType.Log );
-			}
-#endif
         }
 
         public void ShowLogWindow()
