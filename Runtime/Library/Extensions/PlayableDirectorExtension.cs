@@ -23,14 +23,18 @@ namespace HRYooba.Library
             playableDirector.Stop();
         }
 
-        public static UniTask PlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken)
+        public static UniTask PlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool isCancelStop = true)
         {
+            if (isCancelStop) cancellationToken.Register(() => playableDirector.Stop());
+
             playableDirector.Play();
             return UniTask.WaitWhile(() => playableDirector.state == PlayState.Playing, cancellationToken: cancellationToken);
         }
 
-        public static UniTask RewindPlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken)
+        public static UniTask RewindPlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool isCancelStop = true)
         {
+            if (isCancelStop) cancellationToken.Register(() => playableDirector.Stop());
+
             playableDirector.RewindPlay();
             return UniTask.WaitWhile(() => playableDirector.state == PlayState.Playing, cancellationToken: cancellationToken);
         }
