@@ -23,20 +23,34 @@ namespace HRYooba.Library
             playableDirector.Stop();
         }
 
-        public static UniTask PlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool isCancelStop = true)
+        public static UniTask PlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool enablePause = false, bool cancelStop = true)
         {
-            if (isCancelStop) cancellationToken.Register(() => playableDirector.Stop());
+            if (cancelStop) cancellationToken.Register(() => playableDirector.Stop());
 
             playableDirector.Play();
-            return UniTask.WaitWhile(() => playableDirector.state == PlayState.Playing, cancellationToken: cancellationToken);
+            if (enablePause)
+            {
+                return playableDirector.StoppedAsObservable().Merge(playableDirector.PausedAsObservable()).ToUniTask(true, cancellationToken);
+            }
+            else
+            {
+                return playableDirector.StoppedAsObservable().ToUniTask(true, cancellationToken);
+            }
         }
 
-        public static UniTask RewindPlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool isCancelStop = true)
+        public static UniTask RewindPlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool enablePause = false, bool cancelStop = true)
         {
-            if (isCancelStop) cancellationToken.Register(() => playableDirector.Stop());
+            if (cancelStop) cancellationToken.Register(() => playableDirector.Stop());
 
             playableDirector.RewindPlay();
-            return UniTask.WaitWhile(() => playableDirector.state == PlayState.Playing, cancellationToken: cancellationToken);
+            if (enablePause)
+            {
+                return playableDirector.StoppedAsObservable().Merge(playableDirector.PausedAsObservable()).ToUniTask(true, cancellationToken);
+            }
+            else
+            {
+                return playableDirector.StoppedAsObservable().ToUniTask(true, cancellationToken);
+            }
         }
 
         public static IObservable<PlayableDirector> PlayedAsObservable(this PlayableDirector playableDirector)
