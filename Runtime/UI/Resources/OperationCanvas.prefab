@@ -2573,7 +2573,7 @@ GameObject:
   - component: {fileID: 5789525864959836244}
   - component: {fileID: 5789525864959836247}
   m_Layer: 5
-  m_Name: DebuggerCanvas
+  m_Name: OperationCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

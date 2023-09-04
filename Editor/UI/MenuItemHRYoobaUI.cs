@@ -18,10 +18,10 @@ namespace HRYooba.Editor
             Selection.activeObject = go;
         }
 
-        [MenuItem("GameObject/HRYoobaUI/DebuggerCanvas", false, 21)]
-        private static void CreateDebuggerCanvas(MenuCommand menuCommand)
+        [MenuItem("GameObject/HRYoobaUI/OperationCanvas", false, 21)]
+        private static void CreateOperationCanvas(MenuCommand menuCommand)
         {
-            InstantiateGameObject(menuCommand, "DebuggerCanvas");
+            InstantiateGameObject(menuCommand, "OperationCanvas");
         }
 
         [MenuItem("GameObject/HRYoobaUI/IntController", false, 21)]
