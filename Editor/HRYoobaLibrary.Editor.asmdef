@@ -1,5 +1,6 @@
 {
-    "name": "HRYooba.HRYoobaLibrary.Editor",
+    "name": "HRYoobaLibrary.Editor",
+    "rootNamespace": "",
     "references": [
         "GUID:2bafac87e7f4b9b418d9448d219b01ab",
         "GUID:560b04d1a97f54a4e82edc0cbbb69285",
