@@ -48,6 +48,12 @@ namespace HRYooba.Editor
             InstantiateGameObject(menuCommand, "Vector3Controller");
         }
 
+        [MenuItem("GameObject/HRYoobaUI/Vector4Controller", false, 21)]
+        private static void CreateVector4Controller(MenuCommand menuCommand)
+        {
+            InstantiateGameObject(menuCommand, "Vector4Controller");
+        }
+
         [MenuItem("GameObject/HRYoobaUI/Button", false, 21)]
         private static void CreateButton(MenuCommand menuCommand)
         {
