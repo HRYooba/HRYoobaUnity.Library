@@ -95,25 +95,25 @@ namespace HRYooba.UI
             {
                 float value = 0.0f;
                 float.TryParse(text, out value);
-                _value.Value = new Vector4(value, _value.Value.y, _value.Value.z);
+                _value.Value = new Vector4(value, _value.Value.y, _value.Value.z, _value.Value.w);
             }).AddTo(gameObject);
             _inputFields[1].OnEndEditAsObservable().Subscribe(text =>
             {
                 float value = 0.0f;
                 float.TryParse(text, out value);
-                _value.Value = new Vector4(_value.Value.x, value, _value.Value.z);
+                _value.Value = new Vector4(_value.Value.x, value, _value.Value.z, _value.Value.w);
             }).AddTo(gameObject);
             _inputFields[2].OnEndEditAsObservable().Subscribe(text =>
             {
                 float value = 0.0f;
                 float.TryParse(text, out value);
-                _value.Value = new Vector4(_value.Value.x, _value.Value.y, value);
+                _value.Value = new Vector4(_value.Value.x, _value.Value.y, value, _value.Value.w);
             }).AddTo(gameObject);
             _inputFields[3].OnEndEditAsObservable().Subscribe(text =>
             {
                 float value = 0.0f;
                 float.TryParse(text, out value);
-                _value.Value = new Vector4(_value.Value.x, _value.Value.y, value);
+                _value.Value = new Vector4(_value.Value.x, _value.Value.y, _value.Value.z, value);
             }).AddTo(gameObject);
         }
     }
