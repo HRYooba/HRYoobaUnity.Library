@@ -7,23 +7,20 @@ namespace HRYooba.UI
     public class OperationCanvas : MonoBehaviour
     {
         [SerializeField] private bool _isActive = true;
-        [SerializeField] private float _showAlpha = 1.0f;
-        [SerializeField] private float _hideAlpha = 0.0f;
+        [SerializeField, Range(0.0f, 1.0f)] private float _alpha = 1.0f;
 
         private CanvasGroup _canvasGroup = null;
 
         public bool IsActive => _isActive;
 
-        public float ShowAlpha
+        public float Alpha
         {
-            set => _showAlpha = value;
-            get => _showAlpha;
-        }
-
-        public float HideAlpha
-        {
-            set => _hideAlpha = value;
-            get => _hideAlpha;
+            get => _alpha;
+            set
+            {
+                _alpha = value;
+                _canvasGroup.alpha = _alpha;
+            }
         }
 
         private void Awake()
@@ -43,7 +40,7 @@ namespace HRYooba.UI
         public void SetActive(bool value)
         {
             _isActive = value;
-            _canvasGroup.alpha = value ? _showAlpha : _hideAlpha;
+            _canvasGroup.alpha = value ? _alpha : 0.0f;
             _canvasGroup.blocksRaycasts = value;
             _canvasGroup.interactable = value;
         }
