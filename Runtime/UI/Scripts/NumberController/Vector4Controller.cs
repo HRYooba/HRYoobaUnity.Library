@@ -118,6 +118,7 @@ namespace HRYooba.UI
 
         private void OnTitleChanged(string value)
         {
+            gameObject.name = value;
             _x.Title = value + ".x";
             _y.Title = value + ".y";
             _z.Title = value + ".z";
