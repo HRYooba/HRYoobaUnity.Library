@@ -59,7 +59,9 @@ namespace HRYooba.UI
 
         private void Awake()
         {
+#if UNITY_EDITOR
             if (!Application.isPlaying) return;
+#endif
 
             // ReactiveProperty
             _value.Subscribe(OnValueChanged).AddTo(gameObject);
@@ -79,11 +81,13 @@ namespace HRYooba.UI
             _y.IsInfinity = _isInfinity;
             _z.IsInfinity = _isInfinity;
 
+#if UNITY_EDITOR
             if (Application.isPlaying) return;
             OnValueChanged(_value.Value);
             OnMinValueChanged(_minValue.Value);
             OnMaxValueChanged(_maxValue.Value);
             OnTitleChanged(_title.Value);
+#endif
         }
 
         private void OnValueChanged(Vector3 value)

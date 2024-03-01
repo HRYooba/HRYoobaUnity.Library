@@ -54,7 +54,9 @@ namespace HRYooba.UI
 
         private void Awake()
         {
+#if UNITY_EDITOR
             if (!Application.isPlaying) return;
+#endif
 
             // ReactiveProperty
             _value.Subscribe(OnValueChanged).AddTo(gameObject);
@@ -67,6 +69,7 @@ namespace HRYooba.UI
             _inputField.OnEndEditAsObservable().Subscribe(OnInputFieldEndEdit).AddTo(gameObject);
         }
 
+#if UNITY_EDITOR
         private void Update()
         {
             if (Application.isPlaying) return;
@@ -75,6 +78,7 @@ namespace HRYooba.UI
             OnMaxValueChanged(_maxValue.Value);
             OnTitleChanged(_title.Value);
         }
+#endif
 
         private void OnValueChanged(int value)
         {
