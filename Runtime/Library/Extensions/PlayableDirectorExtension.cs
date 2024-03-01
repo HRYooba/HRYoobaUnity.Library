@@ -1,11 +1,8 @@
 
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Timeline;
-using UniRx;
+using R3;
 
 namespace HRYooba.Library
 {
@@ -23,62 +20,49 @@ namespace HRYooba.Library
             playableDirector.Stop();
         }
 
-        public static UniTask PlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool enablePause = false, bool cancelStop = true)
+        public static async UniTask PlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool enablePause = false, bool cancelStop = true)
         {
             if (cancelStop) cancellationToken.Register(() => playableDirector.Stop());
 
             playableDirector.Play();
             if (enablePause)
             {
-                return playableDirector.StoppedAsObservable().Merge(playableDirector.PausedAsObservable()).ToUniTask(true, cancellationToken);
+                await playableDirector.StoppedAsObservable().Merge(playableDirector.PausedAsObservable()).FirstAsync(cancellationToken);
             }
             else
             {
-                return playableDirector.StoppedAsObservable().ToUniTask(true, cancellationToken);
+                await playableDirector.StoppedAsObservable().FirstAsync(cancellationToken);
             }
         }
 
-        public static UniTask RewindPlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool enablePause = false, bool cancelStop = true)
+        public static async UniTask RewindPlayAsync(this PlayableDirector playableDirector, CancellationToken cancellationToken, bool enablePause = false, bool cancelStop = true)
         {
             if (cancelStop) cancellationToken.Register(() => playableDirector.Stop());
 
             playableDirector.RewindPlay();
             if (enablePause)
             {
-                return playableDirector.StoppedAsObservable().Merge(playableDirector.PausedAsObservable()).ToUniTask(true, cancellationToken);
+                await playableDirector.StoppedAsObservable().Merge(playableDirector.PausedAsObservable()).FirstAsync(cancellationToken);
             }
             else
             {
-                return playableDirector.StoppedAsObservable().ToUniTask(true, cancellationToken);
+                await playableDirector.StoppedAsObservable().FirstAsync(cancellationToken);
             }
         }
 
-        public static IObservable<PlayableDirector> PlayedAsObservable(this PlayableDirector playableDirector)
+        public static Observable<PlayableDirector> PlayedAsObservable(this PlayableDirector playableDirector)
         {
             return Observable.FromEvent<PlayableDirector>(h => playableDirector.played += h, h => playableDirector.played -= h);
         }
 
-        public static IObservable<PlayableDirector> PausedAsObservable(this PlayableDirector playableDirector)
+        public static Observable<PlayableDirector> PausedAsObservable(this PlayableDirector playableDirector)
         {
             return Observable.FromEvent<PlayableDirector>(h => playableDirector.paused += h, h => playableDirector.paused -= h);
         }
 
-        public static IObservable<PlayableDirector> StoppedAsObservable(this PlayableDirector playableDirector)
+        public static Observable<PlayableDirector> StoppedAsObservable(this PlayableDirector playableDirector)
         {
             return Observable.FromEvent<PlayableDirector>(h => playableDirector.stopped += h, h => playableDirector.stopped -= h);
-        }
-
-        public static void BindAllActivationTrackToThisInactivation(this PlayableDirector playableDirector)
-        {
-            var tracks = (playableDirector.playableAsset as TimelineAsset).GetOutputTracks();
-            foreach (var track in tracks)
-            {
-                if (track.GetType() == typeof(ActivationTrack))
-                {
-                    var activationObject = playableDirector.GetGenericBinding(track) as GameObject;
-                    playableDirector.gameObject.ObserveEveryValueChanged(_ => _.activeSelf).Where(activeSelf => !activeSelf).Subscribe(activationObject.SetActive).AddTo(playableDirector);
-                }
-            }
         }
     }
 }

@@ -1,96 +1,119 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UniRx;
+using R3;
 
 namespace HRYooba.UI
 {
-    [ExecuteInEditMode]
+    [ExecuteAlways]
     public class Vector2Controller : MonoBehaviour
     {
+        [SerializeField] private bool _isInfinity = false;
+
         [Header("Value")]
-        [SerializeField] private StringReactiveProperty _title = new StringReactiveProperty("Vector2Controller");
-        [SerializeField] private Vector2ReactiveProperty _value = new Vector2ReactiveProperty(Vector2.zero);
-        [SerializeField] private Vector2ReactiveProperty _maxValue = new Vector2ReactiveProperty(Vector2.one);
-        [SerializeField] private Vector2ReactiveProperty _minValue = new Vector2ReactiveProperty(Vector2.zero);
+        [SerializeField] private SerializableReactiveProperty<string> _title = new("Vector2Controller");
+        [SerializeField] private SerializableReactiveProperty<Vector2> _value = new(Vector2.zero);
+        [SerializeField] private SerializableReactiveProperty<Vector2> _minValue = new(Vector2.zero);
+        [SerializeField] private SerializableReactiveProperty<Vector2> _maxValue = new(Vector2.one);
 
         [Header("UI")]
-        [SerializeField] private Slider[] _sliders = new Slider[2];
-        [SerializeField] private InputField[] _inputFields = new InputField[2];
-        [SerializeField] private Text[] _texts = new Text[2];
+        [SerializeField] private FloatController _x = null;
+        [SerializeField] private FloatController _y = null;
 
-        public System.IObservable<Vector2> OnValueChanged
+        public Observable<Vector2> OnValueChangedObservable => _value;
+
+        public bool IsInfinity
         {
-            get { return _value; }
+            set
+            {
+                _isInfinity = value;
+                _x.IsInfinity = value;
+                _y.IsInfinity = value;
+            }
+            get => _isInfinity;
         }
 
         public string Title
         {
-            set { _title.Value = value; }
-            get { return _title.Value; }
+            set => _title.Value = value;
+            get => _title.Value;
         }
 
         public Vector2 Value
         {
-            set { _value.Value = value; }
-            get { return _value.Value; }
-        }
-
-        public Vector2 MaxValue
-        {
-            set { _maxValue.Value = value; }
-            get { return _maxValue.Value; }
+            set => _value.Value = value;
+            get => _value.Value;
         }
 
         public Vector2 MinValue
         {
-            set { _minValue.Value = value; }
-            get { return _minValue.Value; }
+            set => _minValue.Value = value;
+            get => _minValue.Value;
+        }
+
+        public Vector2 MaxValue
+        {
+            set => _maxValue.Value = value;
+            get => _maxValue.Value;
         }
 
         private void Awake()
         {
+            if (!Application.isPlaying) return;
+
             // ReactiveProperty
-            _maxValue.Subscribe(value =>
-            {
-                _sliders[0].maxValue = value.x;
-                _sliders[1].maxValue = value.y;
-            }).AddTo(gameObject);
-            _minValue.Subscribe(value =>
-            {
-                _sliders[0].minValue = value.x;
-                _sliders[1].minValue = value.y;
-            }).AddTo(gameObject);
-            _title.Subscribe(value =>
-            {
-                gameObject.name = value;
-                _texts[0].text = value + ".X";
-                _texts[1].text = value + ".Y";
-            }).AddTo(gameObject);
-            _value.Subscribe(value =>
-            {
-                _sliders[0].value = value.x;
-                _sliders[1].value = value.y;
-                _inputFields[0].text = value.x.ToString();
-                _inputFields[1].text = value.y.ToString();
-            }).AddTo(gameObject);
+            _value.Subscribe(OnValueChanged).AddTo(gameObject);
+            _minValue.Subscribe(OnMinValueChanged).AddTo(gameObject);
+            _maxValue.Subscribe(OnMaxValueChanged).AddTo(gameObject);
+            _title.Subscribe(OnTitleChanged).AddTo(gameObject);
 
             // Unity UI
-            _sliders[0].OnValueChangedAsObservable().Subscribe(value => _value.Value = new Vector2(value, _value.Value.y)).AddTo(gameObject);
-            _sliders[1].OnValueChangedAsObservable().Subscribe(value => _value.Value = new Vector2(_value.Value.x, value)).AddTo(gameObject);
-            _inputFields[0].OnEndEditAsObservable().Subscribe(text =>
-            {
-                float value = 0.0f;
-                float.TryParse(text, out value);
-                _value.Value = new Vector2(value, _value.Value.y);
-            }).AddTo(gameObject);
-            _inputFields[1].OnEndEditAsObservable().Subscribe(text =>
-            {
-                float value = 0.0f;
-                float.TryParse(text, out value);
-                _value.Value = new Vector2(_value.Value.x, value);
-            }).AddTo(gameObject);
+            _x.OnValueChangedObservable.Subscribe(OnXValueChanged).AddTo(gameObject);
+            _y.OnValueChangedObservable.Subscribe(OnYValueChanged).AddTo(gameObject);
+        }
+
+        private void Update()
+        {
+            _x.IsInfinity = _isInfinity;
+            _y.IsInfinity = _isInfinity;
+
+            if (Application.isPlaying) return;
+            OnValueChanged(_value.Value);
+            OnMinValueChanged(_minValue.Value);
+            OnMaxValueChanged(_maxValue.Value);
+            OnTitleChanged(_title.Value);
+        }
+
+        private void OnValueChanged(Vector2 value)
+        {
+            _x.Value = value.x;
+            _y.Value = value.y;
+        }
+
+        private void OnMinValueChanged(Vector2 value)
+        {
+            _x.MinValue = value.x;
+            _y.MinValue = value.y;
+        }
+
+        private void OnMaxValueChanged(Vector2 value)
+        {
+            _x.MaxValue = value.x;
+            _y.MaxValue = value.y;
+        }
+
+        private void OnTitleChanged(string value)
+        {
+            _x.Title = value + ".x";
+            _y.Title = value + ".y";
+        }
+
+        private void OnXValueChanged(float value)
+        {
+            _value.Value = new Vector2(value, _value.Value.y);
+        }
+
+        private void OnYValueChanged(float value)
+        {
+            _value.Value = new Vector2(_value.Value.x, value);
         }
     }
 }

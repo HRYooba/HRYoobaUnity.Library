@@ -1,13 +1,11 @@
 using System;
-using System.Linq;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using UnityEngine;
-using UniRx;
+using R3;
 
 namespace HRYooba.Library.Network
 {
@@ -16,17 +14,16 @@ namespace HRYooba.Library.Network
         private const int BufferSize = 1024;
 
         private TcpListener _listener;
-        private List<UnityTcpSession> _sessions = new List<UnityTcpSession>();
+        private List<UnityTcpSession> _sessions = new();
         private CancellationTokenSource _cancellation;
-        private bool _isShowLog;
 
-        private Subject<UnityTcpSession> _onSessionConnected = new Subject<UnityTcpSession>();
-        private Subject<UnityTcpSession> _onSessionDisconnected = new Subject<UnityTcpSession>();
-        private Subject<(UnityTcpSession Session, string Message)> _onMessageReceived = new Subject<(UnityTcpSession, string)>();
+        private readonly Subject<UnityTcpSession> _onSessionConnectedSubject = new();
+        private readonly Subject<UnityTcpSession> _onSessionDisconnectedSubject = new();
+        private readonly Subject<(UnityTcpSession Session, string Message)> _onMessageReceivedSubject = new();
 
-        public UnityTcpServer(bool isShowLog = false)
+        public UnityTcpServer()
         {
-            _isShowLog = isShowLog;
+
         }
 
         ~UnityTcpServer()
@@ -34,33 +31,17 @@ namespace HRYooba.Library.Network
             Dispose();
         }
 
-        public IObservable<UnityTcpSession> OnSessionConnected
-        {
-            get { return _onSessionConnected.ObserveOnMainThread(); }
-        }
-
-        public IObservable<UnityTcpSession> OnSessionDisconnected
-        {
-            get { return _onSessionDisconnected.ObserveOnMainThread(); }
-        }
-
-        public IObservable<(UnityTcpSession Session, string Message)> OnMessageReceived
-        {
-            get { return _onMessageReceived.ObserveOnMainThread(); }
-        }
+        public Observable<UnityTcpSession> OnSessionConnectedObservable => _onSessionConnectedSubject.ObserveOnMainThread();
+        public Observable<UnityTcpSession> OnSessionDisconnectedObservable => _onSessionDisconnectedSubject.ObserveOnMainThread();
+        public Observable<(UnityTcpSession Session, string Message)> OnMessageReceivedObservable => _onMessageReceivedSubject.ObserveOnMainThread();
 
         public void Open(int port)
         {
-            if (_isShowLog) Debug.Log($"UnityTcpServer port({port}) open.");
-
             var localEndPoint = new IPEndPoint(IPAddress.Any, port);
             _listener = new TcpListener(localEndPoint);
             _listener.Start();
 
-            if (_cancellation == null)
-            {
-                _cancellation = new CancellationTokenSource();
-            }
+            _cancellation ??= new CancellationTokenSource();
 
             // 別スレッドで接続待機を行う
             var listenTask = Task.Run(() => ListenAsync(_cancellation.Token));
@@ -71,9 +52,8 @@ namespace HRYooba.Library.Network
             if (_listener == null) return;
 
             Send("unityTcpServerClose");
-            
+
             var port = ((IPEndPoint)_listener.LocalEndpoint).Port;
-            if (_isShowLog) Debug.Log($"UnityTcpServer port({port}) close.");
 
             _cancellation?.Cancel();
             _cancellation?.Dispose();
@@ -103,7 +83,7 @@ namespace HRYooba.Library.Network
                 }
                 catch (InvalidOperationException)
                 {
-                    _onSessionDisconnected.OnNext(session);
+                    _onSessionDisconnectedSubject.OnNext(session);
                     _sessions.Remove(session);
                     session.Dispose();
                 }
@@ -125,7 +105,7 @@ namespace HRYooba.Library.Network
             }
             catch (InvalidOperationException)
             {
-                _onSessionDisconnected.OnNext(session);
+                _onSessionDisconnectedSubject.OnNext(session);
                 _sessions.Remove(session);
                 session.Dispose();
             }
@@ -141,14 +121,9 @@ namespace HRYooba.Library.Network
 
             _sessions = null;
 
-            _onSessionConnected.Dispose();
-            _onSessionConnected = null;
-
-            _onSessionDisconnected.Dispose();
-            _onSessionDisconnected = null;
-
-            _onMessageReceived.Dispose();
-            _onMessageReceived = null;
+            _onSessionConnectedSubject.Dispose();
+            _onSessionDisconnectedSubject.Dispose();
+            _onMessageReceivedSubject.Dispose();
         }
 
         private async Task ListenAsync(CancellationToken cancellationToken)
@@ -162,7 +137,7 @@ namespace HRYooba.Library.Network
                     var client = await _listener.AcceptTcpClientAsync();
                     var session = new UnityTcpSession(client);
                     _sessions.Add(session);
-                    _onSessionConnected.OnNext(session);
+                    _onSessionConnectedSubject.OnNext(session);
 
                     // 別スレッドでデータの受け取りを行う
                     var receiveTask = Task.Run(() => ReceiveAsync(session, cancellationToken));
@@ -196,7 +171,7 @@ namespace HRYooba.Library.Network
                     else
                     {
                         // セッション切断
-                        _onSessionDisconnected.OnNext(session);
+                        _onSessionDisconnectedSubject.OnNext(session);
                         _sessions.Remove(session);
                         session.Dispose();
                         break;
@@ -211,7 +186,7 @@ namespace HRYooba.Library.Network
                             if (data.Length > 0)
                             {
                                 var message = data.Replace("\n", "").ToString();
-                                _onMessageReceived.OnNext((session, message));
+                                _onMessageReceivedSubject.OnNext((session, message));
                             }
                         }
                         dataBuilder = null; // リソース解放

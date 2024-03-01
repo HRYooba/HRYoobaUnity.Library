@@ -367,7 +367,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 718657b6be420a6498b0f091c199a215, type: 3}
-    m_FontSize: 15
+    m_FontSize: 13
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -558,7 +558,6 @@ GameObject:
   - component: {fileID: 4656481755658738888}
   - component: {fileID: 4656481755658738887}
   - component: {fileID: 4656481755658738886}
-  - component: {fileID: 4656481755658738889}
   m_Layer: 5
   m_Name: IntController
   m_TagString: Untagged
@@ -596,19 +595,20 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4656481755658738884}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90972ad83fed8aa4387adc2b4cb80c21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isInfinity: 0
   _title:
     value: IntController
   _value:
     value: 0
-  _maxValue:
-    value: 10
   _minValue:
     value: 0
+  _maxValue:
+    value: 10
   _slider: {fileID: 4656481755313336290}
   _inputField: {fileID: 4656481754934309679}
   _text: {fileID: 4656481754626094594}
@@ -650,18 +650,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4656481755658738889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4656481755658738884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb219b23cdf4b314f94a27bca3cc8012, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4656481755794492398
 GameObject:
   m_ObjectHideFlags: 0

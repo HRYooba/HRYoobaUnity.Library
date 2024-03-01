@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace HRYooba.Library
 {
@@ -19,6 +17,11 @@ namespace HRYooba.Library
         public static Vector3 Vector4Range(Vector4 min, Vector4 max)
         {
             return new Vector4(Random.Range(min.x, max.x), Random.Range(min.y, max.y), Random.Range(min.z, max.z), Random.Range(min.w, max.w));
+        }
+
+        public static Color ColorRange(Color color1, Color color2)
+        {
+            return new Color(Random.Range(color1.r, color2.r), Random.Range(color1.g, color2.g), Random.Range(color1.b, color2.b), Random.Range(color1.a, color2.a));
         }
     }
 }

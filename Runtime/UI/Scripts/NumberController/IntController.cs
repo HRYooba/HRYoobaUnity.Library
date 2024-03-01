@@ -1,78 +1,121 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
+using R3;
 
 namespace HRYooba.UI
 {
-    [ExecuteInEditMode]
+    [ExecuteAlways]
     public class IntController : MonoBehaviour
     {
+        [SerializeField] private bool _isInfinity = false;
+
         [Header("Value")]
-        [SerializeField] private StringReactiveProperty _title = new StringReactiveProperty("IntController");
-        [SerializeField] private IntReactiveProperty _value = new IntReactiveProperty(0);
-        [SerializeField] private IntReactiveProperty _maxValue = new IntReactiveProperty(10);
-        [SerializeField] private IntReactiveProperty _minValue = new IntReactiveProperty(0);
+        [SerializeField] private SerializableReactiveProperty<string> _title = new("IntController");
+        [SerializeField] private SerializableReactiveProperty<int> _value = new(0);
+        [SerializeField] private SerializableReactiveProperty<int> _minValue = new(0);
+        [SerializeField] private SerializableReactiveProperty<int> _maxValue = new(10);
 
         [Header("UI")]
         [SerializeField] private Slider _slider = null;
         [SerializeField] private InputField _inputField = null;
         [SerializeField] private Text _text = null;
 
-        public System.IObservable<int> OnValueChanged
+        public Observable<int> OnValueChangedObservable => _value;
+
+        public bool IsInfinity
         {
-            get { return _value; }
+            set => _isInfinity = value;
+            get => _isInfinity;
         }
 
         public string Title
         {
-            set { _title.Value = value; }
-            get { return _title.Value; }
+            set => _title.Value = value;
+            get => _title.Value;
         }
 
         public int Value
         {
-            set { _value.Value = value; }
-            get { return _value.Value; }
-        }
-
-        public int MaxValue
-        {
-            set { _maxValue.Value = value; }
-            get { return _maxValue.Value; }
+            set => _value.Value = value;
+            get => _value.Value;
         }
 
         public int MinValue
         {
-            set { _minValue.Value = value; }
-            get { return _minValue.Value; }
+            set => _minValue.Value = value;
+            get => _minValue.Value;
+        }
+
+        public int MaxValue
+        {
+            set => _maxValue.Value = value;
+            get => _maxValue.Value;
         }
 
         private void Awake()
         {
+            if (!Application.isPlaying) return;
+
             // ReactiveProperty
-            _maxValue.Subscribe(value => _slider.maxValue = value).AddTo(gameObject);
-            _minValue.Subscribe(value => _slider.minValue = value).AddTo(gameObject);
-            _title.Subscribe(value =>
-            {
-                gameObject.name = value;
-                _text.text = value;
-            }).AddTo(gameObject);
-            _value.Subscribe(value =>
-            {
-                _slider.value = value;
-                _inputField.text = value.ToString();
-            }).AddTo(gameObject);
+            _value.Subscribe(OnValueChanged).AddTo(gameObject);
+            _minValue.Subscribe(OnMinValueChanged).AddTo(gameObject);
+            _maxValue.Subscribe(OnMaxValueChanged).AddTo(gameObject);
+            _title.Subscribe(OnTitleChanged).AddTo(gameObject);
 
             // Unity UI
-            _slider.OnValueChangedAsObservable().Subscribe(value => _value.Value = (int)value).AddTo(gameObject);
-            _inputField.OnEndEditAsObservable().Subscribe(text =>
+            _slider.OnValueChangedAsObservable().Subscribe(OnSliderValueChanged).AddTo(gameObject);
+            _inputField.OnEndEditAsObservable().Subscribe(OnInputFieldEndEdit).AddTo(gameObject);
+        }
+
+        private void Update()
+        {
+            if (Application.isPlaying) return;
+            OnValueChanged(_value.Value);
+            OnMinValueChanged(_minValue.Value);
+            OnMaxValueChanged(_maxValue.Value);
+            OnTitleChanged(_title.Value);
+        }
+
+        private void OnValueChanged(int value)
+        {
+            _slider.value = _isInfinity ? (_minValue.Value + _maxValue.Value) / 2.0f : value;
+            _inputField.text = value.ToString();
+        }
+
+        private void OnMinValueChanged(int value)
+        {
+            if (!_isInfinity) _slider.minValue = value;
+        }
+
+        private void OnMaxValueChanged(int value)
+        {
+            if (!_isInfinity) _slider.maxValue = value;
+        }
+
+        private void OnTitleChanged(string value)
+        {
+            gameObject.name = value;
+            _text.text = value;
+        }
+
+        private void OnSliderValueChanged(float value)
+        {
+            if (_isInfinity)
             {
-                int value = 0;
-                int.TryParse(text, out value);
-                _value.Value = value;
-            }).AddTo(gameObject);
+                var center = (_maxValue.Value + _minValue.Value) / 2.0f;
+                var diff = value - center;
+                _value.Value += Mathf.RoundToInt(diff);
+            }
+            else
+            {
+                _value.Value = Mathf.RoundToInt(value);
+            }
+        }
+
+        private void OnInputFieldEndEdit(string text)
+        {
+            int.TryParse(text, out var value);
+            _value.Value = value;
         }
     }
 }

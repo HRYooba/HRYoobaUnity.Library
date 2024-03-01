@@ -4,32 +4,24 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
-using UniRx;
+using R3;
 
 namespace HRYooba.Library.Network
 {
-    public class UnityTcpClient : System.IDisposable
+    public class UnityTcpClient : IDisposable
     {
         private const int BufferSize = 1024;
 
         private TcpClient _client;
         private CancellationTokenSource _cancellation;
-        private CompositeDisposable _disposables = new();
-        private bool _isShowLog;
 
-        private Subject<string> _onMessageReceived = new Subject<string>();
-        private Subject<(string IpAddress, int Port)> _onServerClosed = new Subject<(string, int)>();
-        private Subject<(string IpAddress, int Port, bool IsConnect)> _onConnected = new Subject<(string, int, bool)>();
+        private readonly Subject<string> _onMessageReceivedSubject = new();
+        private readonly Subject<(string IpAddress, int Port)> _onServerClosedSubject = new();
+        private readonly Subject<(string IpAddress, int Port, bool IsConnect)> _onConnectedSubject = new();
 
-        public UnityTcpClient(bool isShowLog = false)
+        public UnityTcpClient()
         {
-            _isShowLog = isShowLog;
-            if (_isShowLog)
-            {
-                OnServerClosed.Subscribe(endPoint => Debug.Log($"Server({endPoint.IpAddress}:{endPoint.Port}) closed.")).AddTo(_disposables);
-                OnConnected.Subscribe(connectData => Debug.Log($"Server({connectData.IpAddress}:{connectData.Port}) connect " + (connectData.IsConnect ? "success." : "failed."))).AddTo(_disposables);
-            }
+
         }
 
         ~UnityTcpClient()
@@ -37,51 +29,25 @@ namespace HRYooba.Library.Network
             Dispose();
         }
 
-        public System.IObservable<string> OnMessageReceived
-        {
-            get { return _onMessageReceived.ObserveOnMainThread(); }
-        }
-
-        public System.IObservable<(string IpAddress, int Port)> OnServerClosed
-        {
-            get { return _onServerClosed.ObserveOnMainThread(); }
-        }
-
-        public System.IObservable<(string IpAddress, int Port, bool IsConnect)> OnConnected
-        {
-            get { return _onConnected.ObserveOnMainThread(); }
-        }
-
-        public bool IsConnected
-        {
-            get { return _client == null ? false : _client.Connected; }
-        }
+        public Observable<string> OnMessageReceivedObservable => _onMessageReceivedSubject.ObserveOnMainThread();
+        public Observable<(string IpAddress, int Port)> OnServerClosedObservable => _onServerClosedSubject.ObserveOnMainThread();
+        public Observable<(string IpAddress, int Port, bool IsConnect)> OnConnectedObservable => _onConnectedSubject.ObserveOnMainThread();
+        public bool IsConnected => _client != null && _client.Connected;
 
         public void Connect(string ipAddress, int port)
         {
             if (_client != null)
             {
-                if (_isShowLog) Debug.LogWarning($"UnityTcpClient already connected server({ipAddress}:{port})");
-                return;
+                throw new InvalidOperationException("[UnityTcpClient] Already connected.");
             }
 
-            if (_cancellation == null)
-            {
-                _cancellation = new CancellationTokenSource();
-            }
+            _cancellation ??= new CancellationTokenSource();
 
-            var connectTask = ConnectAsync(ipAddress, port, _cancellation.Token);
+            _ = ConnectAsync(ipAddress, port, _cancellation.Token);
         }
 
         public void Disconnect()
         {
-            if (_client != null && _client.Client != null && _client.Client.RemoteEndPoint != null)
-            {
-                var ipAddress = ((IPEndPoint)_client.Client.RemoteEndPoint).Address;
-                var port = ((IPEndPoint)_client.Client.RemoteEndPoint).Port;
-                if (_isShowLog) Debug.Log($"UnityTcpClient disconnect server({ipAddress}:{port})");
-            }
-
             _client?.Dispose();
             _client = null;
 
@@ -114,17 +80,9 @@ namespace HRYooba.Library.Network
         public void Dispose()
         {
             Disconnect();
-
-            _disposables.Dispose();
-
-            _onMessageReceived.Dispose();
-            _onMessageReceived = null;
-
-            _onServerClosed.Dispose();
-            _onServerClosed = null;
-
-            _onConnected.Dispose();
-            _onConnected = null;
+            _onMessageReceivedSubject.Dispose();
+            _onServerClosedSubject.Dispose();
+            _onConnectedSubject.Dispose();
         }
 
         private void PublishServerClosed()
@@ -132,7 +90,7 @@ namespace HRYooba.Library.Network
             if (_client != null && _client.Client != null && _client.Client.RemoteEndPoint != null)
             {
                 var serverEndPoint = (IPEndPoint)_client.Client.RemoteEndPoint;
-                _onServerClosed.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
+                _onServerClosedSubject.OnNext((serverEndPoint.Address.ToString(), serverEndPoint.Port));
             }
         }
 
@@ -142,11 +100,11 @@ namespace HRYooba.Library.Network
             {
                 _client = new TcpClient();
                 await _client.ConnectAsync(ipAddress, port);
-                _onConnected.OnNext((ipAddress, port, true));
+                _onConnectedSubject.OnNext((ipAddress, port, true));
             }
             catch (SocketException)
             {
-                _onConnected.OnNext((ipAddress, port, false));
+                _onConnectedSubject.OnNext((ipAddress, port, false));
                 Disconnect();
             }
             catch
@@ -188,7 +146,7 @@ namespace HRYooba.Library.Network
                     // データ終了文字があれば読み取り完了
                     if (dataBuilder.ToString().Contains("\n"))
                     {
-                        var dataArray = dataBuilder.ToString().Split(new[] { "\r\n", "\n", "\r" }, System.StringSplitOptions.None);
+                        var dataArray = dataBuilder.ToString().Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
                         foreach (var data in dataArray)
                         {
                             if (data.Length > 0)
@@ -203,7 +161,7 @@ namespace HRYooba.Library.Network
                                 }
                                 else
                                 {
-                                    _onMessageReceived.OnNext(message);
+                                    _onMessageReceivedSubject.OnNext(message);
                                 }
                             }
                         }
