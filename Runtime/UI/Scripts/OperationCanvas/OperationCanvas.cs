@@ -10,6 +10,8 @@ namespace HRYooba.UI
 
         private CanvasGroup _canvasGroup = null;
 
+        public bool IsActive => _canvasGroup.alpha >= _showAlpha;
+
         public float ShowAlpha
         {
             set => _showAlpha = value;
