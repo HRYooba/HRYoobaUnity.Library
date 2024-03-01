@@ -88,12 +88,12 @@ namespace HRYooba.UI
 
         private void OnMinValueChanged(int value)
         {
-            if (!_isInfinity) _slider.minValue = value;
+            _slider.minValue = value;
         }
 
         private void OnMaxValueChanged(int value)
         {
-            if (!_isInfinity) _slider.maxValue = value;
+            _slider.maxValue = value;
         }
 
         private void OnTitleChanged(string value)
