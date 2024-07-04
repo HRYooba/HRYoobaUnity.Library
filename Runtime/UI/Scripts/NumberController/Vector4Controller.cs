@@ -75,6 +75,7 @@ namespace HRYooba.UI
             _x.OnValueChangedObservable.Subscribe(OnXValueChanged).AddTo(gameObject);
             _y.OnValueChangedObservable.Subscribe(OnYValueChanged).AddTo(gameObject);
             _z.OnValueChangedObservable.Subscribe(OnZValueChanged).AddTo(gameObject);
+            _w.OnValueChangedObservable.Subscribe(OnWValueChanged).AddTo(gameObject);
         }
 
         private void Update()
@@ -82,6 +83,7 @@ namespace HRYooba.UI
             _x.IsInfinity = _isInfinity;
             _y.IsInfinity = _isInfinity;
             _z.IsInfinity = _isInfinity;
+            _w.IsInfinity = _isInfinity;
 
 #if UNITY_EDITOR
             if (Application.isPlaying) return;
