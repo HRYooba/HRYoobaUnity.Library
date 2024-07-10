@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace HRYooba.Library
 {
-    public static class JsonUtility
+    public static class JsonHelper
     {
         public static T ConvertStringToJson<T>(string strJson) where T : new()
         {
