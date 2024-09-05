@@ -7,6 +7,7 @@ ProjectSetting/PackageManagerから以下のScopeRegistriesを設定
 - Scope(s): 
   - `com.hryooba`
   - `com.cysharp`
+  - `org.nuget`
   - `jillejr.newtonsoft.json-for-unity.converters`
 
 ### 1.2 R3のインストール

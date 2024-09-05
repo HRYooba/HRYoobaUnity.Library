@@ -1,7 +1,7 @@
 {
   "name": "com.hryooba.library",
   "displayName": "HRYoobaLibrary",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "unity": "2021.3",
   "description": "Unity HRYooba Library",
   "author": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "com.cysharp.unitask": "2.5.3",
     "com.cysharp.r3": "1.1.2",
-    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "org.nuget.r3": "1.2.8",
     "jillejr.newtonsoft.json-for-unity.converters": "1.5.1"
   }
 }
