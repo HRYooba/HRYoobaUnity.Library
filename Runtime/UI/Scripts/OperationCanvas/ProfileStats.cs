@@ -25,7 +25,7 @@ namespace HRYooba.UI
             _osInfo = string.Format("OS: {0}", SystemInfo.operatingSystem);
             _cpuInfo = string.Format("CPU: {0} / {1}cores", SystemInfo.processorType, SystemInfo.processorCount);
             _gpuInfo = string.Format("GPU: {0} / {1}MB API: {2}", SystemInfo.graphicsDeviceName, SystemInfo.graphicsMemorySize, SystemInfo.graphicsDeviceType);
-            _resolutionInfo = string.Format("Resolution: {0} x {1} RefreshRate: {2}Hz", Screen.currentResolution.width, Screen.currentResolution.height, Screen.currentResolution.refreshRate);
+            _resolutionInfo = string.Format("Resolution: {0} x {1} RefreshRate: {2}Hz", Screen.currentResolution.width, Screen.currentResolution.height, Screen.currentResolution.refreshRateRatio);
 
             AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
             OnAudioConfigurationChanged(true);
