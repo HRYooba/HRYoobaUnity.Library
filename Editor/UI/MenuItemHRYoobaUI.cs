@@ -18,43 +18,43 @@ namespace HRYooba.Editor
             Selection.activeObject = go;
         }
 
-        [MenuItem("GameObject/HRYoobaUI/OperationCanvas", false, 21)]
+        [MenuItem("GameObject/UI/HRYooba/OperationCanvas", false, 21)]
         private static void CreateOperationCanvas(MenuCommand menuCommand)
         {
             InstantiateGameObject(menuCommand, "OperationCanvas");
         }
 
-        [MenuItem("GameObject/HRYoobaUI/IntController", false, 21)]
+        [MenuItem("GameObject/UI/HRYooba/IntController", false, 21)]
         private static void CreateIntController(MenuCommand menuCommand)
         {
             InstantiateGameObject(menuCommand, "IntController");
         }
 
-        [MenuItem("GameObject/HRYoobaUI/FloatController", false, 21)]
+        [MenuItem("GameObject/UI/HRYooba/FloatController", false, 21)]
         private static void CreateFloatController(MenuCommand menuCommand)
         {
             InstantiateGameObject(menuCommand, "FloatController");
         }
 
-        [MenuItem("GameObject/HRYoobaUI/Vector2Controller", false, 21)]
+        [MenuItem("GameObject/UI/HRYooba/Vector2Controller", false, 21)]
         private static void CreateVector2Controller(MenuCommand menuCommand)
         {
             InstantiateGameObject(menuCommand, "Vector2Controller");
         }
 
-        [MenuItem("GameObject/HRYoobaUI/Vector3Controller", false, 21)]
+        [MenuItem("GameObject/UI/HRYooba/Vector3Controller", false, 21)]
         private static void CreateVector3Controller(MenuCommand menuCommand)
         {
             InstantiateGameObject(menuCommand, "Vector3Controller");
         }
 
-        [MenuItem("GameObject/HRYoobaUI/Vector4Controller", false, 21)]
+        [MenuItem("GameObject/UI/HRYooba/Vector4Controller", false, 21)]
         private static void CreateVector4Controller(MenuCommand menuCommand)
         {
             InstantiateGameObject(menuCommand, "Vector4Controller");
         }
 
-        [MenuItem("GameObject/HRYoobaUI/Button", false, 21)]
+        [MenuItem("GameObject/UI/HRYooba/Button", false, 21)]
         private static void CreateButton(MenuCommand menuCommand)
         {
             InstantiateGameObject(menuCommand, "Button");

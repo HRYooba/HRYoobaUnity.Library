@@ -1,4 +1,4 @@
-# HRYoobaUnityLibrary
+# HRYoobaUnity.Library
 ## 1 インストール
 ### 1.1 パッケージマネージャーの設定
 ProjectSetting/PackageManagerから以下のScopeRegistriesを設定
