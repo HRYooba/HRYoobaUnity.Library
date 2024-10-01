@@ -1,27 +1,9 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEditor;
 
-namespace HRYooba.Editor
+namespace HRYooba.Library.Editor
 {
-    [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
-    public sealed class RangeExAttribute : PropertyAttribute
-    {
-        public readonly float min = .0f;
-        public readonly float max = 100.0f;
-        public readonly float step = 1.0f;
-        public readonly string label = "";
-
-        public RangeExAttribute(float min, float max, float step = 1.0f, string label = "")
-        {
-            this.min = min;
-            this.max = max;
-            this.step = step;
-            this.label = label;
-        }
-    }
-
-#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(RangeExAttribute))]
     internal sealed class RangeExDrawer : PropertyDrawer
     {
@@ -89,5 +71,4 @@ namespace HRYooba.Editor
             }
         }
     }
-#endif
 }

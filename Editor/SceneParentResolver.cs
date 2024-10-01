@@ -4,7 +4,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace HRYooba.Library
+namespace HRYooba.Library.Editor
 {
     [InitializeOnLoad]
     public static class SceneParentResolver

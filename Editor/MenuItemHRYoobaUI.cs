@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace HRYooba.Editor
+namespace HRYooba.Library.Editor
 {
     public class MenuItemHRYoobaUI
     {
