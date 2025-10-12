@@ -11,12 +11,14 @@ namespace HRYooba.Library
         public static void RewindPlay(this PlayableDirector playableDirector)
         {
             playableDirector.time = 0.0;
+            playableDirector.Evaluate();
             playableDirector.Play();
         }
 
         public static void Rewind(this PlayableDirector playableDirector)
         {
             playableDirector.time = 0.0;
+            playableDirector.Evaluate();
             playableDirector.Stop();
         }
 
